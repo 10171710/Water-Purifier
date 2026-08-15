@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>We'll Be Right Back — AquaPure Maintenance</title>
+  <meta name="description" content="AquaPure is undergoing scheduled maintenance. We'll be back shortly with even better water care.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💧</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { darkMode: 'class', corePlugins: { preflight: false } };</script>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <div class="min-h-screen flex items-center justify-center px-4 py-12">
+    <div class="container-x">
+      <div class="glass-card mesh-bg p-10 lg:p-16 text-center max-w-3xl mx-auto reveal">
+        <span class="logo-badge mx-auto mb-6" style="width:76px;height:76px;border-radius:24px;"><i data-lucide="droplets" style="width:38px;height:38px;"></i></span>
+        <span class="kicker mb-5"><i data-lucide="construction" style="width:15px;height:15px;"></i> Scheduled Maintenance</span>
+        <h1 class="hero-title mb-4">We're Giving Your <span class="text-grad">Dashboard a Drink</span></h1>
+        <p class="hero-lead mb-8 max-w-xl mx-auto">Our systems are getting a refresh. We'll be back online shortly — usually faster than a glass of cold water.</p>
+
+        <!-- Countdown -->
+        <div class="grid grid-cols-4 gap-3 max-w-md mx-auto mb-8" id="countdown">
+          <div class="neumorph-sm p-4"><p class="num text-grad font-extrabold" style="font-size:1.9rem;" id="cdH">03</p><p class="text-muted text-xs font-semibold">Hours</p></div>
+          <div class="neumorph-sm p-4"><p class="num text-grad font-extrabold" style="font-size:1.9rem;" id="cdM">42</p><p class="text-muted text-xs font-semibold">Minutes</p></div>
+          <div class="neumorph-sm p-4"><p class="num text-grad font-extrabold" style="font-size:1.9rem;" id="cdS">18</p><p class="text-muted text-xs font-semibold">Seconds</p></div>
+          <div class="neumorph-sm p-4"><p class="num text-grad font-extrabold" style="font-size:1.9rem;">💧</p><p class="text-muted text-xs font-semibold">Ready</p></div>
+        </div>
+
+        <div class="flex flex-wrap justify-center gap-3 mb-6">
+          <a href="contact.html" class="btn btn-primary"><i data-lucide="phone-call"></i> Emergency? Call Us</a>
+          <a href="index.html" class="btn btn-glass"><i data-lucide="home"></i> Back to Site</a>
+        </div>
+        <p class="text-muted text-sm">For urgent water purifier issues: <a href="tel:+18005550199" class="font-bold">+1 (800) 555-0199</a></p>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+  <script>lucide.createIcons();</script>
+  <script src="assets/js/main.js"></script>
+  <script>
+    (function () {
+      var total = 3 * 3600 + 42 * 60 + 18;
+      var h = document.getElementById('cdH'), m = document.getElementById('cdM'), s = document.getElementById('cdS');
+      var pad = function (n) { return String(n).padStart(2, '0'); };
+      var tick = function () {
+        h.textContent = pad(Math.floor(total / 3600));
+        m.textContent = pad(Math.floor((total % 3600) / 60));
+        s.textContent = pad(total % 60);
+        if (total > 0) total--;
+      };
+      tick();
+      setInterval(tick, 1000);
+    })();
+  </script>
+</body>
+</html>

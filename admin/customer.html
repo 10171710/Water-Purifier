@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customer Dashboard | AquaPure</title>
+  <meta name="description" content="Your AquaPure customer dashboard: manage your AMC plan, book services and download certificates.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💧</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { darkMode: 'class', corePlugins: { preflight: false } };</script>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <div class="admin-shell dots-bg">
+    <aside id="admin-sidebar" class="sidebar"></aside>
+
+    <div class="admin-main">
+      <div class="welcome-hero reveal">
+        <div class="flex items-center gap-3">
+          <button class="icon-btn icon-btn-sm" style="background:rgba(255,255,255,0.18);border-color:rgba(255,255,255,0.4);color:#fff;" onclick="toggleAdminSidebar()" aria-label="Toggle sidebar"><i data-lucide="panel-left-open"></i></button>
+          <div>
+            <p class="kicker" style="display:inline-block;">Customer Portal</p>
+            <h1 class="text-2xl font-extrabold mt-1">Hi <span id="custName">Customer</span> 👋</h1>
+            <p class="text-muted text-sm">Manage your plan, bookings and certificates — all in one place.</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3 flex-wrap">
+          <button class="icon-btn icon-btn-sm" id="rtlToggle" type="button" title="Toggle RTL / LTR" aria-label="Toggle layout direction"><i data-lucide="arrow-left-right"></i></button>
+          <button class="icon-btn icon-btn-sm" id="themeToggle" type="button" title="Toggle dark / light mode" aria-label="Toggle theme"><i data-lucide="moon"></i></button>
+          <button class="btn btn-primary btn-sm" onclick="renewAMC()"><i data-lucide="refresh-cw"></i> Renew AMC</button>
+          <button class="btn btn-ghost btn-sm" id="custLogout" onclick="logoutCustomer()"><i data-lucide="log-out"></i> Logout</button>
+        </div>
+      </div>
+
+      <div id="dashMsg" class="glass-card p-4 mb-4 hidden"></div>
+
+      <!-- Quick stats -->
+      <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4 mb-6">
+        <div class="metric-card reveal">
+          <span class="metric-icon" style="background:var(--grad);"><i data-lucide="shield-check"></i></span>
+          <div><p class="text-muted text-xs font-semibold">Active AMC</p><p class="text-xl font-extrabold" id="statPlan">Family Plan</p><p class="text-muted text-xs" id="statRenew">Renews Mar 12, 2027</p></div>
+        </div>
+        <div class="metric-card reveal reveal-delay-1">
+          <span class="metric-icon" style="background:linear-gradient(135deg,#0e7490,#06b6d4);"><i data-lucide="calendar-check"></i></span>
+          <div><p class="text-muted text-xs font-semibold">Next Service</p><p class="text-xl font-extrabold" id="statNext">—</p><p class="text-muted text-xs" id="statNextSub">No booking yet</p></div>
+        </div>
+        <div class="metric-card reveal reveal-delay-2">
+          <span class="metric-icon" style="background:linear-gradient(135deg,#06b6d4,#06b6d4);"><i data-lucide="wrench"></i></span>
+          <div><p class="text-muted text-xs font-semibold">Visits Used</p><p class="text-xl font-extrabold" id="statVisits">2 of 4</p><p class="text-muted text-xs">Quarterly plan</p></div>
+        </div>
+        <div class="metric-card reveal reveal-delay-3">
+          <span class="metric-icon" style="background:linear-gradient(135deg,#06b6d4,#ec4899);"><i data-lucide="award"></i></span>
+          <div><p class="text-muted text-xs font-semibold">Certificates</p><p class="text-xl font-extrabold" id="statCerts">0</p><p class="text-muted text-xs">Service &amp; installation</p></div>
+        </div>
+      </div>
+
+      <!-- Active plan + Book a service -->
+      <div class="grid gap-6 xl:grid-cols-2 mb-6">
+        <div class="glass-card p-6 reveal">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="font-extrabold text-lg">My AMC Plan</h2>
+            <span class="badge badge-accent"><i data-lucide="shield-check" style="width:13px;height:13px;"></i> Active</span>
+          </div>
+          <div class="grid gap-3">
+            <div class="data-row"><span class="grow font-semibold">Plan</span><b id="planName">Family AMC</b></div>
+            <div class="data-row"><span class="grow font-semibold">Plan number</span><b id="planNumber">AMC-2026-4412</b></div>
+            <div class="data-row"><span class="grow font-semibold">Visits used</span><b id="planVisits">2 of 4</b></div>
+            <div class="data-row"><span class="grow font-semibold">Next renewal</span><b id="planRenew">Mar 12, 2027</b></div>
+            <div class="data-row"><span class="grow font-semibold">Upcoming service</span><b id="planUpcoming">—</b></div>
+          </div>
+          <h3 class="font-extrabold text-sm mt-5 mb-2">Upcoming bookings</h3>
+          <div id="upcomingList" class="grid gap-2"></div>
+          <p id="upcomingEmpty" class="text-muted text-xs" style="padding:.25rem 0;">No upcoming bookings yet.</p>
+          <button class="btn btn-ghost btn-sm mt-4" onclick="openResched()"><i data-lucide="calendar-clock"></i> Reschedule Visit</button>
+        </div>
+
+        <div class="glass-card p-6 reveal reveal-delay-1">
+          <h2 class="font-extrabold text-lg mb-1">Book a Service Visit</h2>
+          <p class="text-muted text-sm mb-5">Pick a service type, date and time slot.</p>
+          <form id="bookingForm">
+            <div class="grid gap-4">
+              <div class="form-group">
+                <label class="label" for="svcType">Service Type</label>
+                <select id="svcType" class="select">
+                  <option>General service</option>
+                  <option>Filter replacement</option>
+                  <option>RO membrane change</option>
+                  <option>UV lamp replacement</option>
+                  <option>Leakage / drip fix</option>
+                  <option>Full overhaul</option>
+                  <option>Water quality test</option>
+                </select>
+              </div>
+              <div class="grid gap-4 sm:grid-cols-2">
+                <div class="form-group">
+                  <label class="label" for="svcDate">Date</label>
+                  <input id="svcDate" class="input" type="date">
+                </div>
+                <div class="form-group">
+                  <label class="label" for="svcTime">Time Slot</label>
+                  <select id="svcTime" class="select">
+                    <option>9:00 – 10:00 AM</option>
+                    <option>10:30 – 11:30 AM</option>
+                    <option>12:00 – 1:00 PM</option>
+                    <option>2:00 – 3:00 PM</option>
+                    <option>3:30 – 4:30 PM</option>
+                    <option>5:00 – 6:00 PM</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="label" for="svcNote">Technician Note</label>
+                <input id="svcNote" class="input" type="text" placeholder="e.g. water tastes metallic" required>
+              </div>
+            </div>
+            <div class="flex flex-wrap items-center gap-4 mt-5">
+              <button type="submit" class="btn btn-primary"><i data-lucide="calendar-check"></i> Confirm Booking</button>
+              <span class="badge badge-accent">AMC benefit: ₹0 call-out</span>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- History + quick links -->
+      <div class="grid gap-6 xl:grid-cols-2">
+        <div class="glass-card p-6 reveal">
+          <h2 class="font-extrabold text-lg mb-4">Recent Services</h2>
+          <div id="historyList" class="grid gap-3"></div>
+        </div>
+
+        <div class="glass-card p-6 reveal reveal-delay-1">
+          <h2 class="font-extrabold text-lg mb-4">Quick Actions</h2>
+          <div class="grid gap-3">
+            <button class="btn btn-ghost btn-sm" style="justify-content:flex-start;" onclick="renewAMC()"><i data-lucide="refresh-cw"></i> Renew My AMC Plan</button>
+            <button class="btn btn-ghost btn-sm" style="justify-content:flex-start;" onclick="requestWaterTest()"><i data-lucide="flask-conical"></i> Request Water Quality Test</button>
+            <button class="btn btn-ghost btn-sm" style="justify-content:flex-start;" onclick="downloadAllCerts()"><i data-lucide="award"></i> Download All Certificates</button>
+            <a class="btn btn-ghost btn-sm" href="mailto:support@aquapure.com?subject=AquaPure%20Support%20Request" style="justify-content:flex-start;"><i data-lucide="headset"></i> Contact Support</a>
+            <a class="btn btn-primary btn-sm" href="../index.html" style="justify-content:flex-start;"><i data-lucide="globe"></i> View Website</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="popup-backdrop" id="reschedModal" style="display:none;" role="dialog" aria-modal="true" aria-label="Reschedule visit">
+    <div class="popup-card">
+      <div class="popup-head"><h3 class="font-extrabold">Reschedule Visit</h3><button type="button" class="icon-btn icon-btn-sm popup-close" onclick="closeResched()" aria-label="Close"><i data-lucide="x"></i></button></div>
+      <p class="text-muted text-sm mb-4" id="reschedCurrent"></p>
+      <div class="grid gap-4">
+        <div class="form-group">
+          <label class="label" for="reschedDate">New Date</label>
+          <input id="reschedDate" class="input" type="date">
+        </div>
+        <div class="form-group">
+          <label class="label" for="reschedTime">New Time Slot</label>
+          <select id="reschedTime" class="select">
+            <option>9:00 – 10:00 AM</option>
+            <option>10:30 – 11:30 AM</option>
+            <option>12:00 – 1:00 PM</option>
+            <option>2:00 – 3:00 PM</option>
+            <option>3:30 – 4:30 PM</option>
+            <option>5:00 – 6:00 PM</option>
+          </select>
+        </div>
+      </div>
+      <div class="flex gap-3 justify-end mt-5">
+        <button type="button" class="btn btn-ghost btn-sm" onclick="closeResched()">Cancel</button>
+        <button type="button" class="btn btn-primary btn-sm" onclick="confirmResched()"><i data-lucide="check"></i> Confirm New Date</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+  <script src="../assets/js/admin-navbar.js"></script>
+  <script>renderAdminNav('customer');</script>
+  <script src="../assets/js/main.js"></script>
+  <script>
+    var SESSION_KEY = 'aquapure_session';
+    var DATA_KEY = 'aquapure_customer_data';
+
+    function getSession() { try { return JSON.parse(localStorage.getItem(SESSION_KEY)) || null; } catch (e) { return null; } }
+    function logoutCustomer() {
+      localStorage.removeItem(SESSION_KEY);
+      window.location.href = '../login.html';
+    }
+
+    function todayISO() { return new Date().toISOString().slice(0, 10); }
+    function fmtDate(iso) {
+      if (!iso) return '—';
+      var d = new Date(iso + 'T00:00:00');
+      return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+    function fmtFull(iso) {
+      var d = new Date(iso + 'T00:00:00');
+      return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+    }
+
+    function getData() {
+      try { return JSON.parse(localStorage.getItem(DATA_KEY)) || null; } catch (e) { return null; }
+    }
+    function saveData(d) { localStorage.setItem(DATA_KEY, JSON.stringify(d)); }
+
+    function seedData() {
+      var data = {
+        plan: {
+          name: 'Family AMC',
+          product: 'AquaPure Home+ RO 12L',
+          number: 'AMC-2026-4412',
+          totalVisits: 4,
+          usedVisits: 2,
+          renewDate: '2027-03-12'
+        },
+        bookings: [],
+        history: [
+          { id: 'H1', title: 'Quarterly service #2', date: '2026-07-10', meta: 'Technician: Vikram · ₹0 (AMC)', cert: true },
+          { id: 'H2', title: 'General service + carbon filter', date: '2026-04-04', meta: 'Technician: Ravi · ₹0 (AMC)', cert: true },
+          { id: 'H3', title: 'Installation — Home+ RO', date: '2026-03-12', meta: 'Free with purchase', cert: true },
+          { id: 'H4', title: 'Water quality test', date: '2026-03-12', meta: 'TDS 58 · pH 7.2 · Report #WT-2214', cert: true }
+        ]
+      };
+      saveData(data);
+      return data;
+    }
+
+    function showMsg(type, html) {
+      var m = document.getElementById('dashMsg');
+      m.classList.remove('hidden');
+      m.className = 'glass-card p-4 mb-4' + (type === 'error' ? ' badge-danger' : ' badge-primary');
+      m.innerHTML = html;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      clearTimeout(showMsg._t);
+      showMsg._t = setTimeout(function () { m.classList.add('hidden'); }, 5000);
+    }
+
+    function render() {
+      var data = getData() || seedData();
+      var upcoming = null;
+      if (data.bookings.length) {
+        upcoming = data.bookings[0];
+      }
+
+      document.getElementById('statRenew').textContent = 'Renews ' + fmtDate(data.plan.renewDate);
+      document.getElementById('statNext').textContent = upcoming ? fmtDate(upcoming.date) : '—';
+      document.getElementById('statNextSub').textContent = upcoming ? (upcoming.time + ' · ' + upcoming.type) : 'No booking yet';
+      document.getElementById('statVisits').textContent = data.plan.usedVisits + ' of ' + data.plan.totalVisits;
+      document.getElementById('statCerts').textContent = data.history.filter(function (h) { return h.cert; }).length;
+
+      document.getElementById('planName').textContent = data.plan.name + ' · ' + data.plan.product;
+      document.getElementById('planNumber').textContent = data.plan.number;
+      document.getElementById('planVisits').textContent = data.plan.usedVisits + ' of ' + data.plan.totalVisits;
+      document.getElementById('planRenew').textContent = fmtDate(data.plan.renewDate);
+      document.getElementById('planUpcoming').textContent = upcoming ? (fmtFull(upcoming.date) + ' · ' + upcoming.time + ' — ' + upcoming.type) : 'No upcoming service';
+
+      var up = document.getElementById('upcomingList');
+      up.innerHTML = data.bookings.map(function (b) {
+        return '<div class="data-row p-3 rounded-xl items-start"><span class="status-dot blue mt-2"></span>' +
+          '<div class="grow"><p class="font-semibold text-sm">' + b.type + '</p>' +
+          '<p class="text-muted text-xs">' + fmtFull(b.date) + ' · ' + b.time + (b.note ? ' · ' + b.note : '') + '</p></div>' +
+          '<button class="btn btn-ghost btn-sm" onclick="cancelBooking(\'' + b.id + '\')"><i data-lucide="x"></i> Cancel</button></div>';
+      }).join('');
+      document.getElementById('upcomingEmpty').style.display = data.bookings.length ? 'none' : '';
+
+      var hist = document.getElementById('historyList');
+      hist.innerHTML = data.history.map(function (h) {
+        var action = h.cert
+          ? '<button class="dl-btn" onclick="downloadCert(\'' + h.id + '\')"><i data-lucide="download"></i> Cert</button>'
+          : '';
+        return '<div class="data-row"><span class="status-dot green"></span><div class="grow"><p class="font-semibold text-sm">' + h.title + '</p><p class="text-muted text-xs">' + fmtFull(h.date) + ' · ' + h.meta + '</p></div>' + action + '</div>';
+      }).join('');
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function renewAMC() {
+      var data = getData() || seedData();
+      if (!confirm('Renew your ' + data.plan.name + ' for another year (₹1,499/year)?')) return;
+      var dt = new Date(data.plan.renewDate + 'T00:00:00');
+      dt.setFullYear(dt.getFullYear() + 1);
+      data.plan.renewDate = dt.toISOString().slice(0, 10);
+      data.plan.usedVisits = 0;
+      saveData(data);
+      render();
+      showMsg('success', '<p class="text-sm font-bold">AMC renewed until ' + fmtDate(data.plan.renewDate) + '. Visits reset.</p>');
+    }
+
+    document.getElementById('bookingForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var data = getData() || seedData();
+      var type = document.getElementById('svcType').value;
+      var date = document.getElementById('svcDate').value;
+      var time = document.getElementById('svcTime').value;
+      var note = document.getElementById('svcNote').value.trim();
+      if (!date) { showMsg('error', '<p class="text-sm font-bold">Please choose a date for your service.</p>'); return; }
+      if (date < todayISO()) { showMsg('error', '<p class="text-sm font-bold">Date cannot be in the past.</p>'); return; }
+      if (!note) { showMsg('error', '<p class="text-sm font-bold">Please describe the issue in the Technician Note.</p>'); return; }
+      var id = 'B' + Date.now();
+      var booking = { id: id, type: type, date: date, time: time, note: note, status: 'scheduled', createdAt: new Date().toISOString() };
+      data.bookings.unshift(booking);
+      data.plan.usedVisits = Math.min(data.plan.usedVisits + 1, data.plan.totalVisits);
+      saveData(data);
+      document.getElementById('bookingForm').reset();
+      document.getElementById('svcDate').value = '';
+      render();
+      showMsg('success', '<p class="text-sm font-bold">Service booked! ' + fmtFull(date) + ' · ' + time + ' — ' + type + '. Confirmation sent to your email.</p>');
+    });
+
+    var reschedId = null;
+
+    function openResched() {
+      var data = getData() || seedData();
+      if (!data.bookings.length) { showMsg('error', '<p class="text-sm font-bold">You have no upcoming booking to reschedule.</p>'); return; }
+      var b = data.bookings[0];
+      reschedId = b.id;
+      document.getElementById('reschedCurrent').textContent = 'Current: ' + fmtFull(b.date) + ' · ' + b.time + ' — ' + b.type;
+      var dateEl = document.getElementById('reschedDate');
+      dateEl.min = todayISO();
+      dateEl.value = b.date;
+      document.getElementById('reschedTime').value = b.time;
+      document.getElementById('reschedModal').style.display = 'grid';
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function closeResched() {
+      reschedId = null;
+      document.getElementById('reschedModal').style.display = 'none';
+    }
+
+    function confirmResched() {
+      if (!reschedId) return;
+      var data = getData() || seedData();
+      var b = data.bookings.filter(function (x) { return x.id === reschedId; })[0];
+      var newDate = document.getElementById('reschedDate').value;
+      var newTime = document.getElementById('reschedTime').value;
+      if (!newDate) { showMsg('error', '<p class="text-sm font-bold">Please pick a new date.</p>'); return; }
+      if (newDate < todayISO()) { showMsg('error', '<p class="text-sm font-bold">Date cannot be in the past.</p>'); return; }
+      if (b) { b.date = newDate; b.time = newTime; }
+      saveData(data);
+      closeResched();
+      render();
+      showMsg('success', '<p class="text-sm font-bold">Booking moved to ' + fmtFull(newDate) + ' · ' + newTime + '.</p>');
+    }
+
+    function cancelBooking(id) {
+      var data = getData() || seedData();
+      var b = data.bookings.filter(function (x) { return x.id === id; })[0];
+      if (!b) return;
+      if (!confirm('Cancel your ' + b.type + ' on ' + fmtFull(b.date) + '?')) return;
+      data.bookings = data.bookings.filter(function (x) { return x.id !== id; });
+      data.plan.usedVisits = Math.max(0, data.plan.usedVisits - 1);
+      saveData(data);
+      render();
+      showMsg('success', '<p class="text-sm font-bold">Booking cancelled. Visit restored.</p>');
+    }
+
+    function requestWaterTest() {
+      var data = getData() || seedData();
+      var tds = prompt('Your last TDS was 58. Enter current TDS reading (or leave blank to schedule a test):', '');
+      var rec = { id: 'W' + Date.now(), title: 'Water quality test', date: todayISO(), meta: 'Requested today · TDS ' + (tds || '—'), cert: false };
+      data.history.unshift(rec);
+      saveData(data);
+      render();
+      showMsg('success', '<p class="text-sm font-bold">Water quality test requested. A technician will contact you within 24 hours.</p>');
+    }
+
+    function downloadCert(id) {
+      var data = getData() || seedData();
+      var rec = data.history.filter(function (h) { return h.id === id; })[0];
+      if (!rec) { showMsg('error', '<p class="text-sm font-bold">Certificate not found.</p>'); return; }
+      var code = 'SC-' + (1000 + Math.floor(Math.random() * 9000));
+      downloadFile(rec.title + ' — Certificate.html', certHTML(rec, code), 'text/html');
+      showMsg('success', '<p class="text-sm font-bold">Certificate downloaded. Verification code: ' + code + '</p>');
+    }
+
+    function downloadAllCerts() {
+      var data = getData() || seedData();
+      var certs = data.history.filter(function (h) { return h.cert; });
+      if (!certs.length) { showMsg('error', '<p class="text-sm font-bold">No certificates available yet.</p>'); return; }
+      var html = certs.map(function (h) {
+        return certHTML(h, 'SC-' + (1000 + Math.floor(Math.random() * 9000)));
+      }).join('<hr style="margin:30px 0;">');
+      downloadFile('All Certificates.html', html, 'text/html');
+      showMsg('success', '<p class="text-sm font-bold">' + certs.length + ' certificate(s) downloaded.</p>');
+    }
+
+    function certHTML(rec, code) {
+      var session = getSession() || {};
+      return '<!DOCTYPE html><html><head><meta charset="utf-8"><title>Certificate</title></head>' +
+        '<body style="font-family:Arial,sans-serif;max-width:640px;margin:40px auto;padding:40px;border:3px solid #06b6d4;border-radius:16px;text-align:center;">' +
+        '<h1 style="color:#0e7490;">AquaPure</h1>' +
+        '<p style="color:#666;">Certificate of Service</p>' +
+        '<h2>' + rec.title + '</h2>' +
+        '<p style="color:#333;">This certifies that <b>' + (session.name || 'Customer') + '</b> completed the above service on <b>' + fmtFull(rec.date) + '</b>.</p>' +
+        '<p style="color:#666;">Service date: ' + fmtFull(rec.date) + '<br>' + rec.meta + '</p>' +
+        '<p style="margin-top:30px;color:#0e7490;font-weight:bold;">Verification Code: ' + code + '</p>' +
+        '<p style="color:#999;font-size:12px;">Scan-free digital certificate · AquaPure © 2026</p>' +
+        '</body></html>';
+    }
+
+    function downloadFile(name, content, mime) {
+      var blob = new Blob([content], { type: mime });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = name;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+    }
+
+    (function () {
+      var s = getSession();
+      if (!s || s.role !== 'customer') { window.location.href = '../login.html'; return; }
+      var name = document.getElementById('custName');
+      if (name) name.textContent = s.name || 'Customer';
+    })();
+
+    function applyTheme() {
+      var saved = localStorage.getItem('ap-theme');
+      var dark = saved ? saved === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+      document.documentElement.classList.toggle('dark', dark);
+      document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+      var btn = document.getElementById('themeToggle');
+      if (btn && window.lucide) {
+        btn.innerHTML = dark ? '<i data-lucide="sun"></i>' : '<i data-lucide="moon"></i>';
+        lucide.createIcons();
+      }
+    }
+    function applyDirection() {
+      var dir = localStorage.getItem('ap-dir') || 'ltr';
+      document.documentElement.setAttribute('dir', dir);
+      document.documentElement.setAttribute('lang', dir === 'rtl' ? 'ar' : 'en');
+    }
+    var themeToggle = document.getElementById('themeToggle');
+    if (themeToggle) themeToggle.addEventListener('click', function () {
+      var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.classList.toggle('dark', next === 'dark');
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('ap-theme', next);
+      this.innerHTML = next === 'dark' ? '<i data-lucide="sun"></i>' : '<i data-lucide="moon"></i>';
+      if (window.lucide) lucide.createIcons();
+    });
+    var rtlToggle = document.getElementById('rtlToggle');
+    if (rtlToggle) rtlToggle.addEventListener('click', function () {
+      var next = document.documentElement.getAttribute('dir') === 'rtl' ? 'ltr' : 'rtl';
+      document.documentElement.setAttribute('dir', next);
+      document.documentElement.setAttribute('lang', next === 'rtl' ? 'ar' : 'en');
+      localStorage.setItem('ap-dir', next);
+    });
+    var svcDateEl = document.getElementById('svcDate');
+    if (svcDateEl) svcDateEl.min = todayISO();
+    applyTheme();
+    applyDirection();
+    render();
+  </script>
+</body>
+</html>

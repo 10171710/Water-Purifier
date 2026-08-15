@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Categories &amp; Seasonal Availability | AquaPure Admin</title>
+  <meta name="description" content="Manage water purifier categories and the seasonal availability of filters and spare parts.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💧</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { darkMode: 'class', corePlugins: { preflight: false } };</script>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <div class="admin-shell">
+    <aside id="admin-sidebar" class="sidebar"></aside>
+
+    <div class="admin-main">
+      <div class="admin-topbar">
+        <div class="flex items-center gap-3">
+          <button class="icon-btn icon-btn-sm" onclick="toggleAdminSidebar()" aria-label="Toggle sidebar"><i data-lucide="panel-left-open"></i></button>
+          <div>
+            <h1 class="text-2xl font-extrabold">Categories &amp; Seasonal Stock</h1>
+            <p class="text-muted text-sm">Purifier types by water condition &amp; filter availability across seasons.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Category cards -->
+      <h2 class="font-extrabold text-lg mb-4">Purifier Categories</h2>
+      <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 mb-8">
+        <div class="glass-card p-6 reveal">
+          <div class="flex items-center justify-between mb-3"><span class="icon-box icon-box-sm"><i data-lucide="filter"></i></span><span class="badge badge-accent">14 models</span></div>
+          <h3 class="font-extrabold mb-1">RO Purifiers</h3>
+          <p class="text-muted text-sm mb-3">Best for high TDS (&gt;500), borewell &amp; hard water. Removes dissolved salts &amp; heavy metals.</p>
+          <div class="spec-row"><span>Water source</span><b>Borewell / Tanker</b></div>
+          <div class="spec-row"><span>Power needed</span><b>Yes</b></div>
+          <div class="spec-row"><span>Peak season</span><b>Summer</b></div>
+        </div>
+        <div class="glass-card p-6 reveal reveal-delay-1">
+          <div class="flex items-center justify-between mb-3"><span class="icon-box icon-box-violet icon-box-sm"><i data-lucide="sun"></i></span><span class="badge badge-accent">9 models</span></div>
+          <h3 class="font-extrabold mb-1">UV Purifiers</h3>
+          <p class="text-muted text-sm mb-3">Best for municipal water (TDS &lt;500). Kills 99.99% pathogens, retains minerals.</p>
+          <div class="spec-row"><span>Water source</span><b>Municipal</b></div>
+          <div class="spec-row"><span>Power needed</span><b>Yes</b></div>
+          <div class="spec-row"><span>Peak season</span><b>Monsoon</b></div>
+        </div>
+        <div class="glass-card p-6 reveal reveal-delay-2">
+          <div class="flex items-center justify-between mb-3"><span class="icon-box icon-box-emerald icon-box-sm"><i data-lucide="zap-off"></i></span><span class="badge badge-accent">7 models</span></div>
+          <h3 class="font-extrabold mb-1">Gravity Purifiers</h3>
+          <p class="text-muted text-sm mb-3">Non-electric, zero wastage. Ideal for power cuts &amp; rural setups.</p>
+          <div class="spec-row"><span>Water source</span><b>Any</b></div>
+          <div class="spec-row"><span>Power needed</span><b>No</b></div>
+          <div class="spec-row"><span>Peak season</span><b>All year</b></div>
+        </div>
+      </div>
+
+      <!-- Seasonal availability -->
+      <h2 class="font-extrabold text-lg mb-4">Seasonal Availability — Filters &amp; Parts</h2>
+
+      <div class="glass-card p-6 reveal">
+        <div class="mb-6">
+          <h3 class="font-extrabold mb-3"><i data-lucide="sun" style="display:inline-block;"></i> Summer</h3>
+          <div class="table-wrap">
+            <table class="tbl">
+              <thead><tr><th>Part</th><th>Season demand</th><th>Stock</th><th>Reorder at</th><th>Status</th></tr></thead>
+              <tbody>
+                <tr><td><b>High-TDS RO Membrane</b></td><td>High</td><td>340 units</td><td>120</td><td><span class="badge badge-accent">Healthy</span></td></tr>
+                <tr><td><b>Sediment Filter 10"</b></td><td>High</td><td>82 units</td><td>150</td><td><span class="badge badge-warm">Reorder soon</span></td></tr>
+                <tr><td><b>UF Membrane</b></td><td>Medium</td><td>210 units</td><td>100</td><td><span class="badge badge-accent">Healthy</span></td></tr>
+                <tr><td><b>Carbon Block</b></td><td>Medium</td><td>45 units</td><td>100</td><td><span class="badge badge-danger">Reorder now</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="mb-6">
+          <h3 class="font-extrabold mb-3"><i data-lucide="cloud-rain" style="display:inline-block;"></i> Monsoon</h3>
+          <div class="table-wrap">
+            <table class="tbl">
+              <thead><tr><th>Part</th><th>Season demand</th><th>Stock</th><th>Reorder at</th><th>Status</th></tr></thead>
+              <tbody>
+                <tr><td><b>Anti-Bacterial Filter</b></td><td>Very high</td><td>520 units</td><td>200</td><td><span class="badge badge-accent">Healthy</span></td></tr>
+                <tr><td><b>Monsoon Servicing Kit</b></td><td>High</td><td>96 units</td><td>150</td><td><span class="badge badge-warm">Reorder soon</span></td></tr>
+                <tr><td><b>UV Lamp 11W</b></td><td>High</td><td>300 units</td><td>120</td><td><span class="badge badge-accent">Healthy</span></td></tr>
+                <tr><td><b>Sanitizer Doses</b></td><td>Medium</td><td>140 units</td><td>80</td><td><span class="badge badge-accent">Healthy</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div>
+          <h3 class="font-extrabold mb-3"><i data-lucide="snowflake" style="display:inline-block;"></i> Winter</h3>
+          <div class="table-wrap">
+            <table class="tbl">
+              <thead><tr><th>Part</th><th>Season demand</th><th>Stock</th><th>Reorder at</th><th>Status</th></tr></thead>
+              <tbody>
+                <tr><td><b>Booster Pump</b></td><td>High</td><td>74 units</td><td>90</td><td><span class="badge badge-warm">Reorder soon</span></td></tr>
+                <tr><td><b>Hot-Water Valves</b></td><td>Medium</td><td>180 units</td><td>80</td><td><span class="badge badge-accent">Healthy</span></td></tr>
+                <tr><td><b>Taste &amp; Mineral Kit</b></td><td>High</td><td>230 units</td><td>100</td><td><span class="badge badge-accent">Healthy</span></td></tr>
+                <tr><td><b>Winter Flow Regulator</b></td><td>Low</td><td>60 units</td><td>50</td><td><span class="badge badge-accent">Healthy</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Same-day info -->
+      <div class="grid gap-6 xl:grid-cols-2 mt-6">
+        <div class="glass-card p-6 reveal">
+          <h3 class="font-extrabold text-lg mb-4"><i data-lucide="zap" style="color:var(--primary);display:inline-block;"></i> Same-Day Service Capacity</h3>
+          <div class="grid gap-3">
+            <div class="data-row"><span class="grow font-semibold">Technicians on duty</span><b>27 / 34</b></div>
+            <div class="data-row"><span class="grow font-semibold">Same-day slots available</span><b>19</b></div>
+            <div class="data-row"><span class="grow font-semibold">Avg. first-free slot</span><b>Today, 2:00 PM</b></div>
+            <div class="data-row"><span class="grow font-semibold">Coverage zones</span><b>48 / 52</b></div>
+          </div>
+          <div class="progress mt-3"><span style="width:79%;"></span></div>
+          <p class="text-muted text-xs mt-2">79% of same-day slots currently filled.</p>
+        </div>
+        <div class="glass-card p-6 reveal reveal-delay-1">
+          <h3 class="font-extrabold text-lg mb-4"><i data-lucide="truck" style="color:var(--primary);display:inline-block;"></i> Same-Day Delivery Fleet</h3>
+          <div class="grid gap-3">
+            <div class="data-row"><span class="grow font-semibold">Vans on route</span><b>9</b></div>
+            <div class="data-row"><span class="grow font-semibold">Next delivery window</span><b>Today, 4–6 PM</b></div>
+            <div class="data-row"><span class="grow font-semibold">Order cut-off</span><b>2:00 PM</b></div>
+            <div class="data-row"><span class="grow font-semibold">On-time rate (7 days)</span><b class="text-emerald-500">96%</b></div>
+          </div>
+          <a href="orders.html" class="btn btn-ghost btn-sm mt-4"><i data-lucide="clipboard-list"></i> View Orders</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+  <script src="../assets/js/admin-navbar.js"></script>
+  <script>renderAdminNav('categories');</script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

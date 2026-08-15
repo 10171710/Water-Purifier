@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AquaPure Product Details</title>
+  <meta name="description" content="AquaPure water purifiers: RO, UV and gravity models with free installation and warranty. View full specifications and features.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💧</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { darkMode: 'class', corePlugins: { preflight: false } };</script>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <div id="site-header"></div>
+
+  <section class="hero" style="padding-block:2.5rem;">
+    <div class="container-x grid gap-10 lg:grid-cols-2 items-start">
+      <!-- Gallery -->
+      <div class="reveal">
+        <div class="thumb thumb-fill neumorph-inset" style="aspect-ratio:4/3;">
+          <img id="pMainImg" src="assets/img/prod-home-ro.png" alt="AquaPure purifier" loading="lazy">
+        </div>
+        <div class="grid grid-cols-4 gap-3 mt-4" id="pThumbs"></div>
+      </div>
+
+      <!-- Info -->
+      <div class="reveal reveal-delay-1" style="margin-top:-14px;">
+        <nav class="flex items-center gap-2 text-sm text-muted mb-4" aria-label="breadcrumb">
+          <a href="index.html">Home</a><i data-lucide="chevron-right" style="width:14px;height:14px;"></i>
+          <a href="products.html">Products</a><i data-lucide="chevron-right" style="width:14px;height:14px;"></i>
+          <span class="font-semibold" id="pCrumb" style="color:var(--text);">Home+ RO</span>
+        </nav>
+        <div class="flex items-center gap-3 mb-3 flex-wrap">
+          <span class="badge badge-accent" id="pTag">RO · 7-Stage</span>
+          <span class="badge" id="pSku">SKU: AP-RO-001</span>
+          <span class="badge badge-warm"><i data-lucide="truck" style="width:13px;height:13px;"></i> Same-Day Install</span>
+        </div>
+        <h1 class="text-3xl lg:text-4xl font-extrabold mb-3" id="pName">AquaPure Home+ RO 12L</h1>
+        <div class="stars mb-4">★★★★★ <span class="text-muted text-sm" style="margin-inline-start:.3rem;" id="pRating">4.8 · 1,204 ratings</span></div>
+        <p class="text-muted mb-6" id="pDesc">Premium 7-stage purification for high-TDS and hard water. Removes heavy metals, pesticides and microplastics while boosting essential minerals for great taste.</p>
+        <div class="flex items-baseline gap-3 mb-6" style="flex-wrap:wrap;">
+          <p class="price font-extrabold" style="font-size:2.2rem;line-height:1;" id="pPrice">₹12,999</p>
+          <p class="text-muted line-through" style="font-size:1.1rem;" id="pMrp">₹16,999</p>
+          <span class="badge badge-accent" id="pSave">Save 24%</span>
+        </div>
+        <p class="text-sm text-muted mb-6" style="margin-top:-4px;">Inclusive of taxes · Free installation &amp; first service · 2-year comprehensive warranty</p>
+        <div class="flex flex-wrap gap-3 mb-8">
+          <a href="contact.html" class="btn btn-primary btn-lg"><i data-lucide="truck"></i> Order &amp; Install</a>
+          <a href="contact.html" class="btn btn-glass btn-lg"><i data-lucide="phone-call"></i> Get Free Recommendation</a>
+        </div>
+        <div class="glass-card p-5 grid gap-3">
+          <div class="data-row"><i data-lucide="shield-check" style="color:var(--accent);"></i><span class="grow font-semibold">2-year warranty</span><span class="badge badge-accent">Included</span></div>
+          <div class="data-row"><i data-lucide="truck" style="color:var(--accent);"></i><span class="grow font-semibold">Free delivery + installation</span><span class="text-muted">Today</span></div>
+          <div class="data-row"><i data-lucide="refresh-cw" style="color:var(--accent);"></i><span class="grow font-semibold">7-day replacement</span><span class="text-muted">Easy returns</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SPECS & FEATURES -->
+  <section class="section bg-soft">
+    <div class="container-x grid gap-8 lg:grid-cols-2">
+      <div class="glass-card p-7 reveal">
+        <h2 class="text-2xl font-extrabold mb-5 flex items-center gap-2"><i data-lucide="sliders-horizontal"></i> Full Specifications</h2>
+        <div id="pSpecs"></div>
+      </div>
+      <div class="glass-card p-7 reveal reveal-delay-1">
+        <h2 class="text-2xl font-extrabold mb-5 flex items-center gap-2"><i data-lucide="sparkles"></i> Key Features</h2>
+        <ul class="grid gap-4" id="pFeatures"></ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- AMC UPSELL -->
+  <section class="section">
+    <div class="container-x">
+      <div class="glass-card mesh-bg p-8 lg:p-10 flex flex-wrap items-center justify-between gap-6 reveal">
+        <div>
+          <h3 class="text-2xl font-extrabold mb-1">Bundle with an AMC &amp; save ₹500</h3>
+          <p class="text-muted">Quarterly visits, genuine filters and priority service for the first year.</p>
+        </div>
+        <a href="amc-plans.html" class="btn btn-primary btn-lg"><i data-lucide="shield-check"></i> View AMC Plans</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- RELATED PRODUCTS -->
+  <section class="section bg-soft">
+    <div class="container-x">
+      <div class="flex items-center justify-between gap-4 mb-6 reveal">
+        <h2 class="text-2xl font-extrabold flex items-center gap-3"><span class="icon-box icon-box-amber icon-box-sm"><i data-lucide="layers"></i></span> Related Products</h2>
+        <a href="products.html" class="btn btn-ghost btn-sm">View all <i data-lucide="arrow-right" style="width:15px;height:15px;"></i></a>
+      </div>
+      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" id="relatedGrid"></div>
+    </div>
+  </section>
+
+  <div id="site-footer"></div>
+
+  <button id="backToTop" class="icon-btn" style="position:fixed;bottom:1.5rem;inset-inline-end:1.5rem;z-index:50;display:none;" aria-label="Back to top"><i data-lucide="arrow-up"></i></button>
+
+  <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+  <script src="assets/js/navbar.js"></script>
+  <script>renderNavbar('product-single');</script>
+  <script src="assets/js/footer.js"></script>
+  <script>renderFooter();</script>
+  <script src="assets/js/main.js"></script>
+  <script>
+    (function () {
+      const PRODUCTS = {
+        'home-ro': {
+          img: 'assets/img/prod-home-ro.png',
+          cat: 'ro',
+          title: 'AquaPure Home+ RO 12L',
+          crumb: 'Home+ RO',
+          tag: 'RO · 7-Stage',
+          sku: 'AP-RO-001',
+          rating: '4.8 · 1,204 ratings',
+          desc: 'Premium 7-stage purification for high-TDS and hard water. Removes heavy metals, pesticides and microplastics while boosting essential minerals for great taste.',
+          price: '₹12,999', mrp: '₹16,999', save: 'Save 24%',
+          specs: [['Purification Stages', '7 (Sediment, Pre-Carbon, RO, UF, UV, Post-Carbon, Mineral)'], ['Storage Capacity', '12 Litres (SS)'], ['Purified Flow Rate', '18 L/hr'], ['TDS Reduction', 'Up to 98%'], ['Input Pressure', 'Up to 40 psi (booster incl.)'], ['Mineral Booster', 'Yes — Calcium & Magnesium'], ['Power', '45W · In-built SMPS'], ['Dimensions', '38 × 33 × 48 cm'], ['Warranty', '2 Years Comprehensive'], ['Certifications', 'BIS · CE · Water Quality Certified']],
+          features: [['droplet', '7-Stage Purification', 'Removes dissolved salts, heavy metals and microplastics — even from borewell water.'], ['flask-conical', 'Mineral Booster', 'Adds back calcium and magnesium for healthy, tasty water.'], ['gauge', 'TDS Controller', 'Dial the output TDS to your taste — 50 to 300 ppm.'], ['smartphone', 'Filter Change Alarm', 'Buzzer + app reminder so you never run on exhausted filters.']]
+        },
+        'pro-ro': {
+          img: 'assets/img/prod-pro-ro.png',
+          cat: 'ro',
+          title: 'AquaPure Pro+ RO 20L',
+          crumb: 'Pro+ RO',
+          tag: 'RO · 9-Stage',
+          sku: 'AP-RO-002',
+          rating: '4.9 · 862 ratings',
+          desc: 'Smart WiFi-enabled 9-stage RO for families of 5 or more. Tankless boost pump keeps water flowing, with app-based filter tracking and taste control.',
+          price: '₹18,499', mrp: '₹23,999', save: 'Save 23%',
+          specs: [['Purification Stages', '9 (Sediment, Pre-Carbon, RO, UF, UV, Post-Carbon, TDS Ctrl, Mineral, Taste Adjust)'], ['Storage Capacity', '20 Litres (SS)'], ['Purified Flow Rate', '26 L/hr'], ['TDS Reduction', 'Up to 98%'], ['Smart Features', 'WiFi + App (status, filter life, booster)'], ['Tankless Boost', 'Yes — consistent flow'], ['Power', '55W · In-built SMPS'], ['Dimensions', '42 × 36 × 52 cm'], ['Warranty', '2 Years Comprehensive'], ['Certifications', 'BIS · CE']],
+          features: [['wifi', 'WiFi + App Control', 'Check status, water quality and filter life right from your phone.'], ['layers', '9-Stage Purification', 'Extra TDS control and taste stage for the purest output.'], ['zap', 'Tankless Boost Pump', 'Constant water flow even at low incoming pressure.'], ['shield-check', 'Smart Filter Alerts', 'App reminders before filters expire — no guesswork.']]
+        },
+        'office-ro': {
+          img: 'assets/img/prod-office-ro.png',
+          cat: 'ro',
+          title: 'AquaPure Office+ RO 30L',
+          crumb: 'Office+ RO',
+          tag: 'RO · Commercial',
+          sku: 'AP-RO-003',
+          rating: '4.7 · 431 ratings',
+          desc: 'High-capacity commercial RO for offices, cafeterias and small businesses. Booster pump delivers a continuous supply for up to 60 people.',
+          price: '₹26,999', mrp: '₹32,999', save: 'Save 18%',
+          specs: [['Purification Stages', '9 + Booster Pump'], ['Storage Capacity', '30 Litres (SS)'], ['Purified Flow Rate', '40 L/hr'], ['TDS Reduction', 'Up to 97%'], ['Usage', 'Offices · Cafeterias · Businesses'], ['Power', '70W · Heavy-duty SMPS'], ['Dimensions', '48 × 40 × 58 cm'], ['Warranty', '2 Years Comprehensive'], ['Certifications', 'BIS · CE']],
+          features: [['users', 'Built for Teams', 'Continuous clean water for offices and busy cafeterias.'], ['gauge', 'High Flow Rate', '40 L/hr — enough for up to 60 people a day.'], ['wrench', 'Heavy-Duty Pump', 'Commercial-grade booster for steady pressure.'], ['shield-check', 'Business Warranty', '2-year coverage with priority service line.']]
+        },
+        'city-uv': {
+          img: 'assets/img/prod-city-uv.png',
+          cat: 'uv',
+          title: 'AquaPure City UV 8L',
+          crumb: 'City UV',
+          tag: 'UV · Electric',
+          sku: 'AP-UV-004',
+          rating: '4.8 · 1,531 ratings',
+          desc: 'UV + UF purifier for municipal water. Retains natural minerals with zero wastage and kills 99.99% of pathogens.',
+          price: '₹7,499', mrp: '₹9,499', save: 'Save 21%',
+          specs: [['Purification', 'UV + UF + Activated Carbon'], ['Storage Capacity', '8 Litres (SS)'], ['Purified Flow Rate', '15 L/hr'], ['Pathogen Kill Rate', '99.99%'], ['Wastage', 'Zero'], ['Mineral Retention', 'Yes — natural minerals kept'], ['Power', '28W'], ['Dimensions', '30 × 28 × 42 cm'], ['Warranty', '1 Year Comprehensive'], ['Certifications', 'BIS · CE']],
+          features: [['sun', 'UV Sterilization', '99.99% pathogen kill without removing essential minerals.'], ['droplets', 'Zero Wastage', 'No RO reject water — every drop of input is used.'], ['flask-conical', 'Mineral Retention', 'Keeps natural calcium and magnesium intact.'], ['shield-check', 'Filter Change Alarm', 'Buzzer reminders keep purification at peak.']]
+        },
+        'hot-cold': {
+          img: 'assets/img/prod-hot-cold.png',
+          cat: 'uv',
+          title: 'AquaPure City UV Hot & Cold 15L',
+          crumb: 'Hot & Cold',
+          tag: 'UV · Hot/Cold',
+          sku: 'AP-UV-005',
+          rating: '4.8 · 962 ratings',
+          desc: 'One unit for instant hot, cold and room-temperature water. UV-sterilized with a child lock and energy-efficient storage.',
+          price: '₹14,999', mrp: '₹18,999', save: 'Save 21%',
+          specs: [['Purification', 'UV + UF + Activated Carbon'], ['Storage Capacity', '15 Litres'], ['Modes', 'Hot / Cold / Ambient'], ['Hot Water', 'Up to 95°C instantly'], ['Cold Water', '8°C refrigerated'], ['Child Lock', 'Yes'], ['Wastage', 'Zero'], ['Power', '1.6 kW (heating) · 90W (cooling)'], ['Warranty', '2 Years Comprehensive'], ['Certifications', 'BIS · CE']],
+          features: [['flame', 'Instant Hot Water', 'Up to 95°C on tap — perfect for tea and cooking.'], ['snowflake', 'Chilled Water', 'Refrigerated 8°C cold water for summers.'], ['shield-check', 'Child Lock', 'Safe hot-water dispensing, protected from little hands.'], ['sun', 'UV Sterilization', '99.99% pathogen kill in every drop.']]
+        },
+        'tabletop-uv': {
+          img: 'assets/img/prod-tabletop-uv.png',
+          cat: 'uv',
+          title: 'AquaPure Tabletop UV 6L',
+          crumb: 'Tabletop UV',
+          tag: 'UV · Compact',
+          sku: 'AP-UV-006',
+          rating: '4.6 · 704 ratings',
+          desc: 'Space-saving countertop purifier for kitchens, rentals and small homes. UV + carbon purification with a slim footprint.',
+          price: '₹5,499', mrp: '₹6,799', save: 'Save 19%',
+          specs: [['Purification', 'UV + Activated Carbon'], ['Storage Capacity', '6 Litres'], ['Purified Flow Rate', '12 L/hr'], ['Pathogen Kill Rate', '99.99%'], ['Mount', 'Tabletop (countertop)'], ['Wastage', 'Zero'], ['Power', '24W'], ['Dimensions', '26 × 26 × 38 cm'], ['Warranty', '1 Year Comprehensive'], ['Certifications', 'BIS · CE']],
+          features: [['package', 'Compact Design', 'Fits neatly on any countertop — ideal for rentals.'], ['sun', 'UV + Carbon', 'Pathogen-safe water with improved taste.'], ['droplets', 'Zero Wastage', 'Mineral-retaining, no reject water.'], ['zap', 'Low Power', 'Efficient 24W running cost.']]
+        },
+        'rural-18l': {
+          img: 'assets/img/prod-rural.png',
+          cat: 'gravity',
+          title: 'AquaPure Rural+ 18L',
+          crumb: 'Rural+',
+          tag: 'Gravity · No Power',
+          sku: 'AP-GR-007',
+          rating: '4.5 · 1,118 ratings',
+          desc: 'Zero-electricity gravity purifier for areas with unreliable power. UF + activated carbon filters with 18L storage.',
+          price: '₹3,999', mrp: '₹4,799', save: 'Save 17%',
+          specs: [['Purification', 'UF + Activated Carbon'], ['Storage Capacity', '18 Litres'], ['Power Required', 'None'], ['Mount', 'Wall-mount or Tabletop'], ['Wastage', 'Zero'], ['Filter Life', '6–12 months'], ['Dimensions', '35 × 30 × 45 cm'], ['Warranty', '1 Year Comprehensive'], ['Certifications', 'BIS']],
+          features: [['zap-off', 'No Power Needed', 'Works entirely on gravity — perfect for outages.'], ['droplets', 'Zero Wastage', 'No electricity, no reject water.'], ['ruler', '18L Big Tank', 'Wall-mount or tabletop for whole-family supply.'], ['leaf', 'UF + Carbon', 'Removes turbidity, mud and odour.']]
+        },
+        'family-20l': {
+          img: 'assets/img/prod-family.png',
+          cat: 'gravity',
+          title: 'AquaPure Family 20L',
+          crumb: 'Family 20L',
+          tag: 'Gravity · 20L',
+          sku: 'AP-GR-008',
+          rating: '4.7 · 893 ratings',
+          desc: 'Large-capacity gravity purifier with an anti-microbial storage tank. UF + Nano-Karbon filtration for big families.',
+          price: '₹4,499', mrp: '₹5,299', save: 'Save 15%',
+          specs: [['Purification', 'UF + Nano-Karbon'], ['Storage Capacity', '20 Litres'], ['Power Required', 'None'], ['Tank', 'Anti-bacterial'], ['Mount', 'Wall-mount or Tabletop'], ['Wastage', 'Zero'], ['Filter Life', '6–12 months'], ['Dimensions', '36 × 31 × 46 cm'], ['Warranty', '1 Year Comprehensive'], ['Certifications', 'BIS']],
+          features: [['users', 'Family Sized', '20L capacity for 5+ member households.'], ['shield-check', 'Anti-Bacterial Tank', 'Storage that resists bacterial build-up.'], ['zap-off', 'No Power Needed', 'Reliable purification during outages.'], ['droplets', 'Zero Wastage', 'Mineral-retaining gravity filtration.']]
+        },
+        'revive-10l': {
+          img: 'assets/img/prod-revive.png',
+          cat: 'gravity',
+          title: 'AquaPure Revive RO 10L',
+          crumb: 'Revive RO',
+          tag: 'RO + Gravity',
+          sku: 'AP-RO-009',
+          rating: '4.7 · 528 ratings',
+          desc: 'Hybrid purifier: full RO quality with a gravity-style back-up for power outages. Optional power with uninterrupted clean water.',
+          price: '₹9,999', mrp: '₹12,499', save: 'Save 20%',
+          specs: [['Purification', 'RO + Gravity Back-up'], ['Storage Capacity', '10 Litres'], ['Power Required', 'Optional'], ['TDS Reduction', 'Up to 97%'], ['Mode Switch', 'Auto (RO ↔ Gravity)'], ['Wastage', 'Low (3:1)'], ['Dimensions', '32 × 30 × 44 cm'], ['Warranty', '2 Years Comprehensive'], ['Certifications', 'BIS · CE']],
+          features: [['refresh-cw', 'Hybrid Design', 'RO quality with gravity back-up for outages.'], ['zap', 'Optional Power', 'Run on electricity or gravity — your choice.'], ['flask-conical', 'Mineral Booster', 'Retains essential minerals in purified water.'], ['shield-check', 'Auto Mode Switch', 'Seamlessly switches purification modes.']]
+        }
+      };
+
+      var key = new URLSearchParams(window.location.search).get('p') || 'home-ro';
+      var p = PRODUCTS[key] || PRODUCTS['home-ro'];
+      document.title = p.title + ' | AquaPure';
+      document.getElementById('pMainImg').src = p.img;
+      document.getElementById('pCrumb').textContent = p.crumb;
+      document.getElementById('pTag').textContent = p.tag;
+      document.getElementById('pSku').textContent = 'SKU: ' + p.sku;
+      document.getElementById('pName').textContent = p.title;
+      document.getElementById('pRating').textContent = p.rating;
+      document.getElementById('pDesc').textContent = p.desc;
+      document.getElementById('pPrice').textContent = p.price;
+      document.getElementById('pMrp').textContent = p.mrp;
+      document.getElementById('pSave').textContent = p.save;
+
+      var ALL_IMGS = [
+        'assets/img/prod-home-ro.png',
+        'assets/img/prod-pro-ro.png',
+        'assets/img/prod-office-ro.png',
+        'assets/img/prod-city-uv.png',
+        'assets/img/prod-hot-cold.png',
+        'assets/img/prod-tabletop-uv.png',
+        'assets/img/prod-rural.png',
+        'assets/img/prod-family.png',
+        'assets/img/prod-revive.png'
+      ];
+      var startIdx = ALL_IMGS.indexOf(p.img);
+      if (startIdx === -1) { startIdx = 0; }
+      var thumbs = [];
+      for (var i = 0; i < 4; i++) {
+        var src = i === 0 ? p.img : ALL_IMGS[(startIdx + i) % ALL_IMGS.length];
+        var label = i === 0 ? 'front' : (i === 1 ? 'side' : (i === 2 ? 'detail' : 'install'));
+        thumbs.push({ src: src, alt: p.title + ' — ' + label });
+      }
+      var th = document.getElementById('pThumbs');
+      var main = document.getElementById('pMainImg');
+      th.innerHTML = thumbs.map(function (t, i) {
+        var active = i === 0 ? ' style="outline:3px solid var(--primary);outline-offset:-3px;border-radius:14px;"' : '';
+        return '<div class="thumb thumb-fill neumorph-inset" data-thumb-index="' + i + '" style="aspect-ratio:1/1;cursor:pointer;' + (active ? 'outline:3px solid var(--primary);outline-offset:-3px;' : '') + '"><img src="' + t.src + '" alt="' + t.alt + '" loading="lazy"></div>';
+      }).join('');
+      th.querySelectorAll('[data-thumb-index]').forEach(function (cell, i) {
+        cell.addEventListener('click', function () {
+          main.src = thumbs[i].src;
+          main.alt = thumbs[i].alt;
+          th.querySelectorAll('[data-thumb-index]').forEach(function (c) {
+            c.style.outline = '';
+          });
+          cell.style.outline = '3px solid var(--primary)';
+          cell.style.outlineOffset = '-3px';
+        });
+      });
+
+      var specs = document.getElementById('pSpecs');
+      specs.innerHTML = p.specs.map(function (s) {
+        return '<div class="spec-row"><span>' + s[0] + '</span><b>' + s[1] + '</b></div>';
+      }).join('');
+
+      var feats = document.getElementById('pFeatures');
+      feats.innerHTML = p.features.map(function (f) {
+        return '<li class="flex gap-3"><span class="icon-box icon-box-emerald icon-box-sm shrink-0"><i data-lucide="' + f[0] + '"></i></span><div><h4 class="font-extrabold">' + f[1] + '</h4><p class="text-muted text-sm">' + f[2] + '</p></div></li>';
+      }).join('');
+
+      var related = Object.keys(PRODUCTS)
+        .filter(function (k) { return k !== key && PRODUCTS[k].cat === p.cat; })
+        .concat(Object.keys(PRODUCTS).filter(function (k) { return k !== key && PRODUCTS[k].cat !== p.cat; }))
+        .slice(0, 3);
+      var grid = document.getElementById('relatedGrid');
+      if (grid) {
+        grid.innerHTML = related.map(function (k) {
+          var r = PRODUCTS[k];
+          return '<a href="product-single.html?p=' + k + '" class="product-card glass-card reveal">' +
+            '<div class="p-thumb thumb thumb-fill neumorph-inset"><img src="' + r.img + '" alt="' + r.title + '" loading="lazy"></div>' +
+            '<div class="card-body pt-3">' +
+            '<div class="flex items-center justify-between mb-2"><span class="badge badge-accent">' + r.tag + '</span><span class="stars">★★★★★</span></div>' +
+            '<h3 class="font-extrabold text-base mb-1">' + r.title + '</h3>' +
+            '<p class="text-muted text-xs mb-3">' + r.desc.substring(0, 70) + '…</p>' +
+            '<p class="font-extrabold text-lg">' + r.price + ' <span class="text-muted text-xs line-through">' + r.mrp + '</span></p>' +
+            '</div></a>';
+        }).join('');
+      }
+
+      if (window.lucide) lucide.createIcons();
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog — Water Health, Purifier Care &amp; Maintenance Tips | AquaPure</title>
+  <meta name="description" content="Articles about water quality, purifier maintenance, seasonal care and healthy hydration from the AquaPure team.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💧</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { darkMode: 'class', corePlugins: { preflight: false } };</script>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <div id="site-header"></div>
+
+  <section class="hero" style="padding-block:3.5rem;">
+    <div class="container-x text-center reveal">
+      <span class="kicker mb-4"><i data-lucide="newspaper" style="width:15px;height:15px;"></i> AquaPure Blog</span>
+      <h1 class="hero-title mb-3">Water Wisdom &amp; <span class="text-grad">Purifier Care</span></h1>
+      <p class="hero-lead max-w-2xl mx-auto">Practical guides on water quality, maintenance and healthy hydration — written by our technicians and water experts.</p>
+    </div>
+  </section>
+
+  <section class="section bg-soft pt-0">
+    <div class="container-x grid gap-10 lg:grid-cols-[1fr_320px]">
+      <!-- Posts -->
+      <div>
+        <div class="glass-card p-4 mb-8 flex flex-col gap-3 sm:flex-row sm:items-center justify-between reveal">
+          <div class="search-box grow">
+            <i data-lucide="search"></i>
+            <input id="blogSearch" class="input" type="text" placeholder="Search articles...">
+          </div>
+          <div class="filter-row" style="flex-wrap:wrap;">
+            <button class="chip active" data-blog-filter="all">All</button>
+            <button class="chip" data-blog-filter="health">Health</button>
+            <button class="chip" data-blog-filter="seasonal">Seasonal</button>
+            <button class="chip" data-blog-filter="maintenance">Maintenance</button>
+            <button class="chip" data-blog-filter="buying">Buying Guides</button>
+          </div>
+        </div>
+
+        <div class="grid gap-6 md:grid-cols-2">
+          <article id="blog-diy" class="blog-card glass-card reveal" data-blog-card data-cat="maintenance">
+            <div class="thumb"><img class="thumb-img" src="assets/img/bc-1.png" alt="Technician servicing purifier" loading="lazy"></div>
+            <div class="card-body">
+              <div class="blog-meta mb-3"><span class="tag-pill">Maintenance</span><span>Jun 28, 2026</span><span>6 min read</span></div>
+              <h2 class="text-lg font-extrabold mb-2"><a href="blog-single.html#article-diy">DIY vs Professional Purifier Service: The Honest Truth</a></h2>
+              <p class="text-muted mb-4">Some tasks are safe at home. Others will quietly void your warranty. Here's exactly where the line is — and when to call us.</p>
+              <div class="flex items-center justify-between">
+                <span class="flex items-center gap-2 text-sm text-muted"><img class="avatar" style="width:36px;height:36px;" src="assets/img/ba-vikram.jpg" alt="Vikram Rao"><b style="color:var(--text);">Vikram Rao</b></span>
+                <a href="blog-single.html#article-diy" class="btn btn-ghost btn-sm">Read More</a>
+              </div>
+            </div>
+          </article>
+
+          <article id="blog-membrane" class="blog-card glass-card reveal reveal-delay-1" data-blog-card data-cat="health">
+            <div class="thumb"><img class="thumb-img" src="assets/img/bc-2.png" alt="Glass of clean water" loading="lazy"></div>
+            <div class="card-body">
+              <div class="blog-meta mb-3"><span class="tag-pill">Health</span><span>Jun 14, 2026</span><span>5 min read</span></div>
+              <h2 class="text-lg font-extrabold mb-2"><a href="blog-single.html#article-membrane">When to Replace Your RO Membrane (Easy Checklist)</a></h2>
+              <p class="text-muted mb-4">Bad taste, slow recovery, rising TDS — here are the five signs your membrane has finished its job, plus how to test at home.</p>
+              <div class="flex items-center justify-between">
+                <span class="flex items-center gap-2 text-sm text-muted"><img class="avatar" style="width:36px;height:36px;" src="assets/img/ba-sana.jpg" alt="Sana Kapoor"><b style="color:var(--text);">Sana Kapoor</b></span>
+                <a href="blog-single.html#article-membrane" class="btn btn-ghost btn-sm">Read More</a>
+              </div>
+            </div>
+          </article>
+
+          <article id="blog-monsoon" class="blog-card glass-card reveal reveal-delay-2" data-blog-card data-cat="seasonal">
+            <div class="thumb"><img class="thumb-img" src="assets/img/bc-3.png" alt="Raindrops" loading="lazy"></div>
+            <div class="card-body">
+              <div class="blog-meta mb-3"><span class="tag-pill">Seasonal</span><span>May 30, 2026</span><span>4 min read</span></div>
+              <h2 class="text-lg font-extrabold mb-2"><a href="blog-single.html#article-monsoon">Monsoon Water Care: Why Filters Need Extra Attention</a></h2>
+              <p class="text-muted mb-4">Heavy rains spike turbidity and bacterial load in groundwater. Three simple steps keep your family safe all monsoon.</p>
+              <div class="flex items-center justify-between">
+                <span class="flex items-center gap-2 text-sm text-muted"><img class="avatar" style="width:36px;height:36px;" src="assets/img/ba-arjun.jpg" alt="Arjun Mehta"><b style="color:var(--text);">Arjun Mehta</b></span>
+                <a href="blog-single.html#article-monsoon" class="btn btn-ghost btn-sm">Read More</a>
+              </div>
+            </div>
+          </article>
+
+          <article class="blog-card glass-card reveal reveal-delay-3" data-blog-card data-cat="buying">
+            <div class="thumb"><img class="thumb-img" src="assets/img/bc-4.png" alt="Water drop on leaf" loading="lazy"></div>
+            <div class="card-body">
+              <div class="blog-meta mb-3"><span class="tag-pill">Buying Guides</span><span>May 12, 2026</span><span>7 min read</span></div>
+              <h2 class="text-lg font-extrabold mb-2"><a href="blog-single.html#article-buying">RO vs UV vs Gravity: The 2026 Decision Guide</a></h2>
+              <p class="text-muted mb-4">Your water source, TDS and budget decide the answer. We break down every trade-off in plain language.</p>
+              <div class="flex items-center justify-between">
+                <span class="flex items-center gap-2 text-sm text-muted"><img class="avatar" style="width:36px;height:36px;" src="assets/img/ba-meera.jpg" alt="Meera Iyer"><b style="color:var(--text);">Meera Iyer</b></span>
+                <a href="blog-single.html#article-buying" class="btn btn-ghost btn-sm">Read More</a>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <nav class="flex justify-center gap-2 mt-10" aria-label="Blog pagination">
+          <button class="icon-btn icon-btn-sm" disabled aria-label="Previous page"><i data-lucide="chevron-left"></i></button>
+          <button class="chip active">1</button><a href="coming-soon.html" class="chip">2</a><a href="coming-soon.html" class="chip">3</a>
+          <a href="coming-soon.html" class="icon-btn icon-btn-sm" aria-label="Next page"><i data-lucide="chevron-right"></i></a>
+        </nav>
+      </div>
+
+      <!-- Sidebar -->
+      <aside class="grid gap-6 content-start">
+        <div class="glass-card p-6 reveal">
+          <h3 class="font-extrabold mb-4">Categories</h3>
+          <div class="grid gap-2">
+            <a href="#" class="flex items-center justify-between p-2.5 rounded-xl hover:bg-white/40 dark:hover:bg-white/5 bg-white/30 dark:bg-white/5" style="color:var(--text);"><span class="flex items-center gap-2"><i data-lucide="droplet" style="width:16px;height:16px;color:var(--primary);"></i>Health</span><span class="badge">12</span></a>
+            <a href="#" class="flex items-center justify-between p-2.5 rounded-xl hover:bg-white/40 dark:hover:bg-white/5 bg-white/30 dark:bg-white/5" style="color:var(--text);"><span class="flex items-center gap-2"><i data-lucide="cloud-rain" style="width:16px;height:16px;color:var(--primary);"></i>Seasonal</span><span class="badge">9</span></a>
+            <a href="#" class="flex items-center justify-between p-2.5 rounded-xl hover:bg-white/40 dark:hover:bg-white/5 bg-white/30 dark:bg-white/5" style="color:var(--text);"><span class="flex items-center gap-2"><i data-lucide="wrench" style="width:16px;height:16px;color:var(--primary);"></i>Maintenance</span><span class="badge">14</span></a>
+            <a href="#" class="flex items-center justify-between p-2.5 rounded-xl hover:bg-white/40 dark:hover:bg-white/5 bg-white/30 dark:bg-white/5" style="color:var(--text);"><span class="flex items-center gap-2"><i data-lucide="shopping-bag" style="width:16px;height:16px;color:var(--primary);"></i>Buying Guides</span><span class="badge">7</span></a>
+          </div>
+        </div>
+        <div class="glass-card p-6 reveal reveal-delay-1">
+          <h3 class="font-extrabold mb-4">Popular Posts</h3>
+          <div class="grid gap-3">
+            <a href="blog-single.html#article-membrane" class="flex gap-3 p-2 rounded-xl hover:bg-white/40 dark:hover:bg-white/5" style="color:var(--text);"><span class="thumb thumb-grad neumorph-inset" style="width:64px;height:64px;flex-shrink:0;min-height:0;"><span class="text-2xl">💧</span></span><span class="text-sm font-semibold">When to Replace Your RO Membrane</span></a>
+            <a href="blog-single.html#article-diy" class="flex gap-3 p-2 rounded-xl hover:bg-white/40 dark:hover:bg-white/5" style="color:var(--text);"><span class="thumb thumb-grad neumorph-inset" style="width:64px;height:64px;flex-shrink:0;min-height:0;"><span class="text-2xl">🛠️</span></span><span class="text-sm font-semibold">Extend Filter Life: 7 Habits That Actually Work</span></a>
+            <a href="blog-single.html#article-monsoon" class="flex gap-3 p-2 rounded-xl hover:bg-white/40 dark:hover:bg-white/5" style="color:var(--text);"><span class="thumb thumb-grad neumorph-inset" style="width:64px;height:64px;flex-shrink:0;min-height:0;"><span class="text-2xl">🌧️</span></span><span class="text-sm font-semibold">Post-Monsoon Purifier Checkup Checklist</span></a>
+          </div>
+        </div>
+        <div class="glass-card mesh-bg p-6 text-center reveal reveal-delay-2">
+          <span class="icon-box mx-auto mb-4"><i data-lucide="calendar-check"></i></span>
+          <h3 class="font-extrabold mb-2">Book a Free Water Test</h3>
+          <p class="text-muted text-sm mb-4">Know exactly what's in your water before you buy anything.</p>
+          <a href="contact.html" class="btn btn-primary btn-sm btn-block">Book Now</a>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <div id="site-footer"></div>
+
+  <button id="backToTop" class="icon-btn" style="position:fixed;bottom:1.5rem;inset-inline-end:1.5rem;z-index:50;display:none;" aria-label="Back to top"><i data-lucide="arrow-up"></i></button>
+
+  <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+  <script src="assets/js/navbar.js"></script>
+  <script>renderNavbar('blog');</script>
+  <script src="assets/js/footer.js"></script>
+  <script>renderFooter();</script>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

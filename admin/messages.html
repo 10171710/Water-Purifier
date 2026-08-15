@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Messages — Inbox | AquaPure Admin</title>
+  <meta name="description" content="Manage contact form messages, enquiries and support tickets from the AquaPure website.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💧</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { darkMode: 'class', corePlugins: { preflight: false } };</script>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <div class="admin-shell">
+    <aside id="admin-sidebar" class="sidebar"></aside>
+
+    <div class="admin-main">
+      <div class="admin-topbar">
+        <div class="flex items-center gap-3">
+          <button class="icon-btn icon-btn-sm" onclick="toggleAdminSidebar()" aria-label="Toggle sidebar"><i data-lucide="panel-left-open"></i></button>
+          <div>
+            <h1 class="text-2xl font-extrabold">Messages</h1>
+            <p class="text-muted text-sm">Enquiries from the contact form and service bookings.</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="search-box hidden md:block" style="width:220px;"><i data-lucide="search"></i><input id="msgSearch" class="input" type="text" placeholder="Search messages..."></div>
+        </div>
+      </div>
+
+      <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4 mb-6">
+        <div class="metric-card reveal"><span class="metric-icon" style="background:var(--grad);"><i data-lucide="inbox"></i></span><div><p class="text-muted text-xs font-semibold">Unread</p><p class="text-xl font-extrabold" id="mUnread">0</p></div></div>
+        <div class="metric-card reveal reveal-delay-1"><span class="metric-icon" style="background:linear-gradient(135deg,#06b6d4,#06b6d4);"><i data-lucide="message-circle"></i></span><div><p class="text-muted text-xs font-semibold">Total messages</p><p class="text-xl font-extrabold" id="mTotal">0</p></div></div>
+        <div class="metric-card reveal reveal-delay-2"><span class="metric-icon" style="background:linear-gradient(135deg,#06b6d4,#ec4899);"><i data-lucide="clock"></i></span><div><p class="text-muted text-xs font-semibold">Awaiting reply</p><p class="text-xl font-extrabold" id="mPending">0</p></div></div>
+        <div class="metric-card reveal reveal-delay-3"><span class="metric-icon" style="background:linear-gradient(135deg,#0e7490,#06b6d4);"><i data-lucide="mail-check"></i></span><div><p class="text-muted text-xs font-semibold">Resolved</p><p class="text-xl font-extrabold" id="mResolved">0</p></div></div>
+      </div>
+
+      <div class="grid gap-6 xl:grid-cols-3">
+        <!-- List -->
+        <div class="glass-card p-4 xl:col-span-2 reveal">
+          <div class="grid gap-2" id="msgList"></div>
+          <p id="msgEmpty" class="text-muted text-sm hidden" style="padding:.75rem 0;">No conversations match your search.</p>
+        </div>
+
+        <!-- Message thread -->
+        <div class="glass-card p-6 reveal reveal-delay-1">
+          <h3 class="font-extrabold mb-1" id="threadName">—</h3>
+          <p class="text-muted text-sm mb-4" id="threadMeta"></p>
+          <div class="grid gap-3 mb-4" id="threadMessages"></div>
+          <div class="flex gap-2">
+            <input class="input" id="replyInput" type="text" placeholder="Type a reply...">
+            <button class="btn btn-primary btn-sm" id="sendBtn" onclick="sendReply()" type="button"><i data-lucide="send"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+  <script src="../assets/js/admin-navbar.js"></script>
+  <script>renderAdminNav('messages');</script>
+  <script src="../assets/js/main.js"></script>
+  <script>
+    var MESSAGES = [
+      {
+        id: 'M1', name: 'Sarah Mitchell', meta: 'sarah.mitchell@email.com · AMC Customer', time: '2 min ago',
+        preview: 'Hi, my Family AMC expires next month. Can I renew online and do I get a discount? Also, my...',
+        dot: 'blue', unread: true, active: true,
+        messages: [
+          { from: 'them', text: '<b>Hi,</b> my Family AMC expires next month. Can I renew online and do I get a discount? Also, my water has started tasting slightly metallic. Thanks!', time: 'Aug 12 · 10:02 AM' },
+          { from: 'me', text: 'Hi Sarah! You can renew in 2 clicks from your dashboard. I\'ve applied a 10% early-renewal coupon: <b>RENEW10</b>. The metallic taste suggests the membrane may be due — I\'ve scheduled a free check.', time: 'Aug 12 · 10:15 AM · Aisha (Support)' }
+        ]
+      },
+      {
+        id: 'M2', name: 'Facilities, Vertex Corp', meta: 'procurement@vertexcorp.com · Business Enquiry', time: '26 min ago',
+        preview: 'We need pricing for Office+ RO 30L units across 14 offices with a corporate AMC...',
+        dot: 'blue', unread: true,
+        messages: [
+          { from: 'them', text: 'We need pricing for <b>Office+ RO 30L</b> units across 14 offices with a corporate AMC. Please share a quote and bulk discounts.', time: 'Aug 12 · 9:48 AM' }
+        ]
+      },
+      {
+        id: 'M3', name: 'James Carter', meta: 'james.carter@gmail.com · AMC Customer', time: '1 hr ago',
+        preview: 'Can I move my installation to Saturday morning instead?',
+        dot: 'amber', unread: false,
+        messages: [
+          { from: 'them', text: 'Can I move my Rural+ installation to Saturday morning instead of Friday afternoon?', time: 'Aug 12 · 8:20 AM' },
+          { from: 'me', text: 'Sure! I\'ve rescheduled you to Saturday 9:00 AM. You\'ll get a reminder 24h before.', time: 'Aug 12 · 8:35 AM · Aisha (Support)' }
+        ]
+      },
+      {
+        id: 'M4', name: 'Priya Sharma', meta: 'priya.sharma@gmail.com · AMC Customer', time: '3 hrs ago',
+        preview: 'The technician was punctual and the water tastes great. Please share my certificate...',
+        dot: 'green', unread: false,
+        messages: [
+          { from: 'them', text: 'The technician was punctual and the water tastes great. Please share my service certificate.', time: 'Aug 12 · 6:45 AM' },
+          { from: 'me', text: 'Happy to hear it! Your certificate is now available in your dashboard under My Documents.', time: 'Aug 12 · 7:10 AM · Aisha (Support)' }
+        ]
+      }
+    ];
+
+    var CONV_KEY = 'aquapure_messages';
+    function load() {
+      try { return JSON.parse(localStorage.getItem(CONV_KEY)) || null; } catch (e) { return null; }
+    }
+    var convos = load() || MESSAGES;
+    function save() { localStorage.setItem(CONV_KEY, JSON.stringify(convos)); }
+
+    var CURRENT = convos.filter(function (c) { return c.active; })[0] || convos[0];
+
+    function unreadCount() { return convos.filter(function (c) { return c.unread; }).length; }
+
+    function renderMetrics() {
+      var u = unreadCount();
+      document.getElementById('mUnread').textContent = u;
+      document.getElementById('mTotal').textContent = convos.length;
+      document.getElementById('mPending').textContent = u;
+      document.getElementById('mResolved').textContent = convos.length - u;
+    }
+
+    function renderList() {
+      var q = (document.getElementById('msgSearch').value || '').trim().toLowerCase();
+      var filtered = convos.filter(function (c) {
+        return !q || (c.name + ' ' + c.meta + ' ' + c.preview).toLowerCase().indexOf(q) > -1;
+      });
+      document.getElementById('msgList').innerHTML = filtered.map(function (c) {
+        return '<div class="data-row p-3 rounded-xl items-start" style="cursor:pointer;' + (c.id === CURRENT.id ? 'background:var(--bg-soft);' : '') + '" onclick="openThread(\'' + c.id + '\')">' +
+          '<span class="status-dot ' + (c.unread ? c.dot : 'gray') + ' mt-2"></span>' +
+          '<div class="grow"><div class="flex justify-between"><b>' + c.name + '</b><span class="text-muted text-xs">' + c.time + '</span></div>' +
+          '<p class="text-xs font-semibold">' + c.preview.split('...')[0] + '</p>' +
+          '<p class="text-muted text-xs">' + c.preview + '</p></div></div>';
+      }).join('');
+      document.getElementById('msgEmpty').classList.toggle('hidden', filtered.length > 0);
+      renderMetrics();
+    }
+
+    function openThread(id) {
+      var c = convos.filter(function (x) { return x.id === id; })[0];
+      if (!c) return;
+      CURRENT = c;
+      c.unread = false;
+      c.active = true;
+      convos.forEach(function (x) { if (x.id !== id) x.active = false; });
+      save();
+      renderList();
+      renderThread();
+    }
+
+    function renderThread() {
+      document.getElementById('threadName').textContent = CURRENT.name;
+      document.getElementById('threadMeta').textContent = CURRENT.meta;
+      document.getElementById('threadMessages').innerHTML = CURRENT.messages.map(function (m) {
+        var cls = m.from === 'me' ? 'glass-card self-end' : 'neumorph-inset self-start';
+        return '<div class="' + cls + '" style="border-radius:14px;max-width:90%;"><p class="text-sm">' + m.text + '</p><p class="text-muted text-xs mt-2">' + m.time + '</p></div>';
+      }).join('');
+      document.getElementById('threadMessages').scrollTop = 999999;
+    }
+
+    function sendReply() {
+      var input = document.getElementById('replyInput');
+      var text = input.value.trim();
+      if (!text) return;
+      CURRENT.messages.push({ from: 'me', text: escapeHtml(text), time: 'Just now · Aisha (Support)' });
+      CURRENT.preview = text;
+      CURRENT.time = 'Just now';
+      save();
+      input.value = '';
+      renderList();
+      renderThread();
+      showMsg('success', 'Reply sent to <b>' + CURRENT.name + '</b>');
+    }
+
+    function escapeHtml(s) {
+      var div = document.createElement('div');
+      div.textContent = s;
+      return div.innerHTML;
+    }
+
+    function showMsg(type, html) {
+      var el = document.createElement('div');
+      el.className = 'toast-' + type;
+      el.innerHTML = html;
+      Object.assign(el.style, { position: 'fixed', top: '18px', right: '18px', zIndex: '999', padding: '12px 18px', borderRadius: '12px', boxShadow: '0 12px 30px -12px rgba(0,0,0,.35)', background: type === 'success' ? '#0d9488' : '#dc2626', color: '#fff', fontWeight: '600', fontSize: '.9rem' });
+      document.body.appendChild(el);
+      setTimeout(function () { el.remove(); }, 2600);
+    }
+
+    document.getElementById('msgSearch').addEventListener('input', renderList);
+    document.getElementById('replyInput').addEventListener('keydown', function (e) { if (e.key === 'Enter') sendReply(); });
+    renderList();
+    renderThread();
+  </script>
+</body>
+</html>

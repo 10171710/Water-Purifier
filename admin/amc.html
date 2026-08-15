@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AMC Plans — Management | AquaPure Admin</title>
+  <meta name="description" content="Manage AquaPure AMC plans, pricing, active subscribers and renewals.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💧</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { darkMode: 'class', corePlugins: { preflight: false } };</script>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <div class="admin-shell">
+    <aside id="admin-sidebar" class="sidebar"></aside>
+
+    <div class="admin-main">
+      <div class="admin-topbar">
+        <div class="flex items-center gap-3">
+          <button class="icon-btn icon-btn-sm" onclick="toggleAdminSidebar()" aria-label="Toggle sidebar"><i data-lucide="panel-left-open"></i></button>
+          <div>
+            <h1 class="text-2xl font-extrabold">AMC Plans</h1>
+            <p class="text-muted text-sm">Subscriptions, renewals and plan performance.</p>
+          </div>
+        </div>
+      </div>
+
+      <div id="pageMsg" class="glass-card p-4 mb-4 hidden"></div>
+
+      <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4 mb-6">
+        <div class="metric-card reveal"><span class="metric-icon" style="background:var(--grad);"><i data-lucide="shield-check"></i></span><div><p class="text-muted text-xs font-semibold">Active subscribers</p><p class="text-xl font-extrabold" id="mSubs">0</p></div></div>
+        <div class="metric-card reveal reveal-delay-1"><span class="metric-icon" style="background:linear-gradient(135deg,#06b6d4,#06b6d4);"><i data-lucide="refresh-cw"></i></span><div><p class="text-muted text-xs font-semibold">Renewals this month</p><p class="text-xl font-extrabold">388</p></div></div>
+        <div class="metric-card reveal reveal-delay-2"><span class="metric-icon" style="background:linear-gradient(135deg,#06b6d4,#ec4899);"><i data-lucide="alert-triangle"></i></span><div><p class="text-muted text-xs font-semibold">Expiring in 30 days</p><p class="text-xl font-extrabold">217</p></div></div>
+        <div class="metric-card reveal reveal-delay-3"><span class="metric-icon" style="background:linear-gradient(135deg,#0e7490,#06b6d4);"><i data-lucide="indian-rupee"></i></span><div><p class="text-muted text-xs font-semibold">AMC revenue (YTD)</p><p class="text-xl font-extrabold">₹1.42 Cr</p></div></div>
+      </div>
+
+      <!-- Plans -->
+      <div class="grid gap-6 lg:grid-cols-3 mb-6" id="plansGrid"></div>
+
+      <!-- Upcoming expiries -->
+      <div class="glass-card p-6 reveal">
+        <h2 class="font-extrabold text-lg mb-4">Expiring Soon (Next 30 Days)</h2>
+        <div class="table-wrap" style="border:none;">
+          <table class="tbl">
+            <thead><tr><th>Customer</th><th>Plan</th><th>Expiry Date</th><th>Renewal Offer</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td><b>James Carter</b></td><td>Essential AMC</td><td>Aug 1, 2026</td><td>₹100 off + free UV check</td><td><span class="badge badge-warm">Reminder sent</span></td></tr>
+              <tr><td><b>Meena Joshi</b></td><td>Family AMC</td><td>Aug 18, 2026</td><td>₹300 off + free water test</td><td><span class="badge badge-primary">Follow up</span></td></tr>
+              <tr><td><b>Rohit Verma</b></td><td>Premium+</td><td>Sep 2, 2026</td><td>Priority slot upgrade</td><td><span class="badge badge-primary">Follow up</span></td></tr>
+              <tr><td><b>Sana Malik</b></td><td>Family AMC</td><td>Sep 5, 2026</td><td>₹300 off + free water test</td><td><span class="badge badge-primary">Follow up</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="flex flex-wrap gap-3 mt-5">
+          <button class="btn btn-primary btn-sm" onclick="alert('Renewal reminders sent to ' + getPlans().length + ' plans (demo).')"><i data-lucide="bell-ring"></i> Send Reminders</button>
+          <button class="btn btn-ghost btn-sm" onclick="exportPlans()"><i data-lucide="file-down"></i> Export CSV</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+  <script src="../assets/js/admin-navbar.js"></script>
+  <script>renderAdminNav('amc');</script>
+  <script src="../assets/js/main.js"></script>
+  <script>
+    var AMC_KEY = 'aquapure_amc_plans';
+    var EDITING_ID = null;
+
+    function seed() {
+      var data = [
+        { id: 'A1', name: 'Essential', price: 1999, desc: 'UV & gravity purifiers · 2 visits', subscribers: 2104, renewal: 78, visitsUsed: 61, popular: false },
+        { id: 'A2', name: 'Family', price: 3499, desc: 'RO & hybrid · 4 visits + priority', subscribers: 3322, renewal: 88, visitsUsed: 54, popular: true },
+        { id: 'A3', name: 'Premium+', price: 5999, desc: 'All units · 6 visits + unlimited emergency', subscribers: 986, renewal: 91, visitsUsed: 47, popular: false }
+      ];
+      localStorage.setItem(AMC_KEY, JSON.stringify(data));
+      return data;
+    }
+
+    function getPlans() {
+      var raw = localStorage.getItem(AMC_KEY);
+      if (raw) { try { return JSON.parse(raw); } catch (e) {} }
+      return seed();
+    }
+    function savePlans(list) { localStorage.setItem(AMC_KEY, JSON.stringify(list)); }
+
+    function showMsg(type, html) {
+      var m = document.getElementById('pageMsg');
+      m.classList.remove('hidden');
+      m.className = 'glass-card p-4 mb-4' + (type === 'error' ? ' badge-danger' : ' badge-primary');
+      m.innerHTML = html;
+      clearTimeout(showMsg._t);
+      showMsg._t = setTimeout(function () { m.classList.add('hidden'); }, 4000);
+    }
+
+    function render() {
+      var list = getPlans();
+      document.getElementById('mSubs').textContent = list.reduce(function (s, p) { return s + p.subscribers; }, 0).toLocaleString('en-IN');
+
+      document.getElementById('plansGrid').innerHTML = list.map(function (p, i) {
+        var badgeCls = p.popular ? 'badge-accent' : 'badge-primary';
+        var cardCls = p.popular ? 'glass-card mesh-bg p-6 reveal reveal-delay-1' : 'glass-card p-6 reveal' + (i === 1 ? ' reveal-delay-1' : '');
+        return '<div class="' + cardCls + '">' +
+          '<div class="flex items-center justify-between mb-3"><h3 class="font-extrabold text-lg">' + p.name + (p.popular ? ' <span class="badge badge-accent align-middle">Popular</span>' : '') + '</h3><span class="badge ' + badgeCls + '">₹' + p.price.toLocaleString('en-IN') + '/yr</span></div>' +
+          '<p class="text-muted text-sm mb-4">' + p.desc + '</p>' +
+          '<div class="data-row"><span class="grow">Subscribers</span><b>' + p.subscribers.toLocaleString('en-IN') + '</b></div>' +
+          '<div class="data-row"><span class="grow">Renewal rate</span><b class="text-emerald-500">' + p.renewal + '%</b></div>' +
+          '<div class="data-row"><span class="grow">Visits used</span><b>' + p.visitsUsed + '%</b></div>' +
+          '</div>';
+      }).join('');
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function openEdit(id) {
+      var list = getPlans();
+      var p = list.filter(function (x) { return x.id === id; })[0];
+      if (!p) return;
+      EDITING_ID = id;
+      var overlay = document.createElement('div');
+      overlay.className = 'popup-backdrop';
+      overlay.innerHTML =
+        '<div class="popup-card" role="dialog" aria-modal="true" aria-label="Edit AMC plan">' +
+        '<div class="popup-head"><h3 class="font-extrabold">Edit AMC Plan</h3><button type="button" class="icon-btn icon-btn-sm popup-close" aria-label="Close"><i data-lucide="x"></i></button></div>' +
+        '<div class="grid gap-4">' +
+        '<div class="grid gap-4 sm:grid-cols-2">' +
+        '<div class="form-group"><label class="label" for="edName">Plan Name</label><input id="edName" class="input" type="text" required></div>' +
+        '<div class="form-group"><label class="label" for="edPrice">Price (₹/year)</label><input id="edPrice" class="input" type="number" min="0" required></div>' +
+        '</div>' +
+        '<div class="form-group"><label class="label" for="edDesc">Description</label><input id="edDesc" class="input" type="text" required></div>' +
+        '<div class="grid gap-4 sm:grid-cols-3">' +
+        '<div class="form-group"><label class="label" for="edSubs">Subscribers</label><input id="edSubs" class="input" type="number" min="0" required></div>' +
+        '<div class="form-group"><label class="label" for="edRenew">Renewal rate (%)</label><input id="edRenew" class="input" type="number" min="0" max="100" required></div>' +
+        '<div class="form-group"><label class="label" for="edVisits">Visits used (%)</label><input id="edVisits" class="input" type="number" min="0" max="100" required></div>' +
+        '</div>' +
+        '<label class="flex items-center gap-2 text-sm text-muted"><input id="edPopular" type="checkbox" class="accent-sky-500"> Mark as popular</label>' +
+        '</div>' +
+        '<div id="editMsg" class="badge badge-danger p-2 hidden mb-3"></div>' +
+        '<div class="flex gap-3 justify-end mt-5"><button type="button" class="btn btn-ghost" onclick="this.closest(\'.popup-backdrop\').remove()">Cancel</button><button type="button" class="btn btn-primary" id="edSave"><i data-lucide="save"></i> Save Changes</button></div>' +
+        '</div>';
+      document.body.appendChild(overlay);
+      if (window.lucide) lucide.createIcons();
+
+      overlay.querySelector('#edName').value = p.name;
+      overlay.querySelector('#edPrice').value = p.price;
+      overlay.querySelector('#edDesc').value = p.desc;
+      overlay.querySelector('#edSubs').value = p.subscribers;
+      overlay.querySelector('#edRenew').value = p.renewal;
+      overlay.querySelector('#edVisits').value = p.visitsUsed;
+      overlay.querySelector('#edPopular').checked = !!p.popular;
+
+      overlay.querySelector('.popup-close').addEventListener('click', function () { overlay.remove(); });
+      overlay.addEventListener('click', function (ev) { if (ev.target === overlay) overlay.remove(); });
+
+      overlay.querySelector('#edSave').addEventListener('click', function () {
+        var name = overlay.querySelector('#edName').value.trim();
+        var price = parseInt(overlay.querySelector('#edPrice').value, 10);
+        var desc = overlay.querySelector('#edDesc').value.trim();
+        var subs = parseInt(overlay.querySelector('#edSubs').value, 10);
+        var renewal = parseInt(overlay.querySelector('#edRenew').value, 10);
+        var visits = parseInt(overlay.querySelector('#edVisits').value, 10);
+        var popular = overlay.querySelector('#edPopular').checked;
+        var msg = overlay.querySelector('#editMsg');
+        if (!name || !desc) { msg.classList.remove('hidden'); msg.textContent = 'Plan name and description are required.'; return; }
+        if (isNaN(price) || price < 0 || isNaN(subs) || subs < 0 || isNaN(renewal) || renewal < 0 || renewal > 100 || isNaN(visits) || visits < 0 || visits > 100) {
+          msg.classList.remove('hidden'); msg.textContent = 'Enter valid numbers (rates between 0 and 100).'; return;
+        }
+        var list2 = getPlans();
+        list2.forEach(function (x) {
+          if (x.id === EDITING_ID) { x.name = name; x.price = price; x.desc = desc; x.subscribers = subs; x.renewal = renewal; x.visitsUsed = visits; x.popular = popular; }
+        });
+        savePlans(list2);
+        overlay.remove();
+        render();
+        showMsg('success', '<p class="text-sm font-bold">AMC plan updated successfully.</p>');
+      });
+    }
+
+    function exportPlans() {
+      var list = getPlans();
+      var rows = [['Plan', 'Price/yr', 'Description', 'Subscribers', 'Renewal rate %', 'Visits used %']];
+      list.forEach(function (p) { rows.push([p.name, p.price, p.desc, p.subscribers, p.renewal, p.visitsUsed]); });
+      var csv = rows.map(function (r) { return r.map(function (c) { return '"' + String(c).replace(/"/g, '""') + '"'; }).join(','); }).join('\n');
+      var blob = new Blob([csv], { type: 'text/csv' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = 'amc-plans.csv';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+      showMsg('success', '<p class="text-sm font-bold">AMC plans exported as CSV.</p>');
+    }
+
+    render();
+  </script>
+</body>
+</html>

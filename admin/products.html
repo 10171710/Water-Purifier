@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Products — Manage Catalogue | AquaPure Admin</title>
+  <meta name="description" content="Manage the AquaPure product catalogue — RO, UV and gravity purifiers with pricing, stock and status.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💧</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { darkMode: 'class', corePlugins: { preflight: false } };</script>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <div class="admin-shell">
+    <aside id="admin-sidebar" class="sidebar"></aside>
+
+    <div class="admin-main">
+      <div class="admin-topbar">
+        <div class="flex items-center gap-3">
+          <button class="icon-btn icon-btn-sm" onclick="toggleAdminSidebar()" aria-label="Toggle sidebar"><i data-lucide="panel-left-open"></i></button>
+          <div>
+            <h1 class="text-2xl font-extrabold">Products</h1>
+            <p class="text-muted text-sm">Manage your purifier catalogue — pricing, stock &amp; status.</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="search-box hidden md:block" style="width:220px;"><i data-lucide="search"></i><input id="prodSearch" class="input" type="text" placeholder="Search products..."></div>
+        </div>
+      </div>
+
+      <div id="pageMsg" class="glass-card p-4 mb-4 hidden"></div>
+
+      <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4 mb-6">
+        <div class="metric-card reveal"><span class="metric-icon" style="background:var(--grad);"><i data-lucide="box"></i></span><div><p class="text-muted text-xs font-semibold">Total SKUs</p><p class="text-xl font-extrabold" id="mTotal">0</p></div></div>
+        <div class="metric-card reveal reveal-delay-1"><span class="metric-icon" style="background:linear-gradient(135deg,#0e7490,#06b6d4);"><i data-lucide="check-circle-2"></i></span><div><p class="text-muted text-xs font-semibold">In stock</p><p class="text-xl font-extrabold" id="mActive">0</p></div></div>
+        <div class="metric-card reveal reveal-delay-2"><span class="metric-icon" style="background:linear-gradient(135deg,#06b6d4,#ec4899);"><i data-lucide="alert-triangle"></i></span><div><p class="text-muted text-xs font-semibold">Low stock</p><p class="text-xl font-extrabold" id="mLow">0</p></div></div>
+        <div class="metric-card reveal reveal-delay-3"><span class="metric-icon" style="background:linear-gradient(135deg,#0e7490,#ec4899);"><i data-lucide="ban"></i></span><div><p class="text-muted text-xs font-semibold">Discontinued</p><p class="text-xl font-extrabold" id="mDis">0</p></div></div>
+      </div>
+
+      <div class="glass-card p-6 reveal">
+        <div class="table-wrap" style="border:none;">
+          <table class="tbl">
+            <thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Stock</th><th>Status</th><th></th></tr></thead>
+            <tbody id="productsBody"></tbody>
+          </table>
+        </div>
+        <p id="productsEmpty" class="text-muted text-sm hidden" style="padding:.75rem 0;">No products match your search.</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+  <script src="../assets/js/admin-navbar.js"></script>
+  <script>renderAdminNav('products');</script>
+  <script src="../assets/js/main.js"></script>
+  <script>
+    var PROD_KEY = 'aquapure_products';
+    var EDITING_ID = null;
+
+    function seed() {
+      var data = [
+        { id: 'P1', name: 'AquaPure Home+ RO 12L', category: 'RO', price: 12999, stock: 124 },
+        { id: 'P2', name: 'AquaPure Pro+ RO 20L', category: 'RO', price: 18499, stock: 48 },
+        { id: 'P3', name: 'AquaPure Office+ RO 30L', category: 'RO', price: 26999, stock: 11 },
+        { id: 'P4', name: 'AquaPure City UV 8L', category: 'UV', price: 7499, stock: 210 },
+        { id: 'P5', name: 'AquaPure City UV Hot+Cold 15L', category: 'UV', price: 14999, stock: 86 },
+        { id: 'P6', name: 'AquaPure Tabletop UV 6L', category: 'UV', price: 5499, stock: 132 },
+        { id: 'P7', name: 'AquaPure Rural+ 18L', category: 'Gravity', price: 3999, stock: 305 },
+        { id: 'P8', name: 'AquaPure Family 20L', category: 'Gravity', price: 4499, stock: 9 },
+        { id: 'P9', name: 'AquaPure Revive RO 10L', category: 'RO + Gravity', price: 9999, stock: 64 },
+        { id: 'P10', name: 'AquaPure Legacy+ 8L', category: 'UV', price: 4299, stock: 0 }
+      ];
+      localStorage.setItem(PROD_KEY, JSON.stringify(data));
+      return data;
+    }
+
+    function getProducts() {
+      var raw = localStorage.getItem(PROD_KEY);
+      if (raw) { try { return JSON.parse(raw); } catch (e) {} }
+      return seed();
+    }
+    function saveProducts(list) { localStorage.setItem(PROD_KEY, JSON.stringify(list)); }
+
+    function statusOf(p) {
+      if (p.stock === 0) return { label: 'Discontinued', cls: 'badge-danger' };
+      if (p.stock <= 15) return { label: 'Low stock', cls: 'badge-warm' };
+      return { label: 'Active', cls: 'badge-accent' };
+    }
+
+    function showMsg(type, html) {
+      var m = document.getElementById('pageMsg');
+      m.classList.remove('hidden');
+      m.className = 'glass-card p-4 mb-4' + (type === 'error' ? ' badge-danger' : ' badge-primary');
+      m.innerHTML = html;
+      clearTimeout(showMsg._t);
+      showMsg._t = setTimeout(function () { m.classList.add('hidden'); }, 4000);
+    }
+
+    function render() {
+      var list = getProducts();
+      var q = (document.getElementById('prodSearch').value || '').trim().toLowerCase();
+
+      document.getElementById('mTotal').textContent = list.length;
+      document.getElementById('mActive').textContent = list.filter(function (p) { return p.stock > 15; }).length;
+      document.getElementById('mLow').textContent = list.filter(function (p) { return p.stock > 0 && p.stock <= 15; }).length;
+      document.getElementById('mDis').textContent = list.filter(function (p) { return p.stock === 0; }).length;
+
+      var filtered = list.filter(function (p) {
+        return !q || (p.name + ' ' + p.category).toLowerCase().indexOf(q) > -1;
+      });
+
+      document.getElementById('productsBody').innerHTML = filtered.map(function (p) {
+        var st = statusOf(p);
+        return '<tr><td><b>' + p.name + '</b></td><td>' + p.category + '</td><td>₹' + p.price.toLocaleString('en-IN') + '</td><td>' + p.stock + '</td><td><span class="badge ' + st.cls + '">' + st.label + '</span></td><td><button class="btn btn-ghost btn-sm" onclick="openEdit(\'' + p.id + '\')"><i data-lucide="pencil"></i> Edit</button></td></tr>';
+      }).join('');
+      document.getElementById('productsEmpty').classList.toggle('hidden', filtered.length > 0);
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function openEdit(id) {
+      var list = getProducts();
+      var p = list.filter(function (x) { return x.id === id; })[0];
+      if (!p) return;
+      EDITING_ID = id;
+      var overlay = document.createElement('div');
+      overlay.className = 'popup-backdrop';
+      overlay.innerHTML =
+        '<div class="popup-card" role="dialog" aria-modal="true" aria-label="Edit product">' +
+        '<div class="popup-head"><h3 class="font-extrabold">Edit Product</h3><button type="button" class="icon-btn icon-btn-sm popup-close" aria-label="Close"><i data-lucide="x"></i></button></div>' +
+        '<div class="grid gap-4">' +
+        '<div class="form-group"><label class="label" for="edName">Product Name</label><input id="edName" class="input" type="text" required></div>' +
+        '<div class="grid gap-4 sm:grid-cols-3">' +
+        '<div class="form-group"><label class="label" for="edCat">Category</label><select id="edCat" class="select"><option>RO</option><option>UV</option><option>Gravity</option><option>RO + Gravity</option></select></div>' +
+        '<div class="form-group"><label class="label" for="edPrice">Price (₹)</label><input id="edPrice" class="input" type="number" min="0" required></div>' +
+        '<div class="form-group"><label class="label" for="edStock">Stock</label><input id="edStock" class="input" type="number" min="0" required></div>' +
+        '</div>' +
+        '</div>' +
+        '<div id="editMsg" class="badge badge-danger p-2 hidden mb-3"></div>' +
+        '<div class="flex gap-3 justify-end mt-5"><button type="button" class="btn btn-ghost" onclick="this.closest(\'.popup-backdrop\').remove()">Cancel</button><button type="button" class="btn btn-primary" id="edSave"><i data-lucide="save"></i> Save Changes</button></div>' +
+        '</div>';
+      document.body.appendChild(overlay);
+      if (window.lucide) lucide.createIcons();
+
+      overlay.querySelector('#edName').value = p.name;
+      overlay.querySelector('#edCat').value = p.category;
+      overlay.querySelector('#edPrice').value = p.price;
+      overlay.querySelector('#edStock').value = p.stock;
+
+      overlay.querySelector('.popup-close').addEventListener('click', function () { overlay.remove(); });
+      overlay.addEventListener('click', function (ev) { if (ev.target === overlay) overlay.remove(); });
+
+      overlay.querySelector('#edSave').addEventListener('click', function () {
+        var name = overlay.querySelector('#edName').value.trim();
+        var cat = overlay.querySelector('#edCat').value;
+        var price = parseInt(overlay.querySelector('#edPrice').value, 10);
+        var stock = parseInt(overlay.querySelector('#edStock').value, 10);
+        var msg = overlay.querySelector('#editMsg');
+        if (!name) { msg.classList.remove('hidden'); msg.textContent = 'Product name is required.'; return; }
+        if (isNaN(price) || price < 0) { msg.classList.remove('hidden'); msg.textContent = 'Enter a valid price.'; return; }
+        if (isNaN(stock) || stock < 0) { msg.classList.remove('hidden'); msg.textContent = 'Enter a valid stock count.'; return; }
+        var list2 = getProducts();
+        list2.forEach(function (x) {
+          if (x.id === EDITING_ID) { x.name = name; x.category = cat; x.price = price; x.stock = stock; }
+        });
+        saveProducts(list2);
+        overlay.remove();
+        render();
+        showMsg('success', '<p class="text-sm font-bold">Product updated successfully.</p>');
+      });
+    }
+
+    document.getElementById('prodSearch').addEventListener('input', render);
+    render();
+  </script>
+</body>
+</html>

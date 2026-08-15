@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Sign In | AquaPure</title>
+  <meta name="description" content="Sign in to the AquaPure admin dashboard to manage products, AMC plans, orders, customers and service records.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💧</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { darkMode: 'class', corePlugins: { preflight: false } };</script>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="min-h-screen">
+  <div class="flex items-center justify-center gap-2" style="position:fixed;top:1rem;inset-inline-end:1rem;z-index:60;">
+    <button class="icon-btn icon-btn-sm" id="rtlToggle" type="button" title="Toggle RTL / LTR" aria-label="Toggle layout direction"><i data-lucide="arrow-left-right"></i></button>
+    <button class="icon-btn icon-btn-sm" id="themeToggle" type="button" title="Toggle dark / light mode" aria-label="Toggle theme"><i data-lucide="moon"></i></button>
+  </div>
+  <div class="container-x flex items-center justify-center py-10 min-h-screen">
+    <div class="w-full max-w-md reveal">
+      <div class="glass-card p-8">
+        <a class="logo mb-4" href="index.html" dir="ltr" style="display:flex;justify-content:center;"><span class="logo-badge"><i data-lucide="shield-check"></i></span><span>Aqua<span class="text-grad">Pure</span></span></a>
+        <div class="text-center mb-6">
+          <h2 class="text-2xl font-extrabold">Admin Sign In</h2>
+          <p class="text-muted text-sm">Access the AquaPure admin dashboard</p>
+        </div>
+
+        <div id="loginMsg" class="glass-card p-4 mb-4 hidden"></div>
+
+        <form id="loginForm" novalidate>
+          <div class="form-group"><label class="label" for="loginEmail">Email</label><input id="loginEmail" class="input" type="email" placeholder="admin@gmail.com" required></div>
+          <div class="form-group">
+            <div class="flex items-center justify-between mb-1"><label class="label" for="loginPass" style="margin-bottom:0;">Password</label><a href="#" class="text-sm font-semibold" onclick="return alertPasswordHelp()">Forgot password?</a></div>
+            <input id="loginPass" class="input" type="password" placeholder="••••••••" required>
+          </div>
+          <label class="flex items-center gap-2 text-sm text-muted mb-5"><input id="rememberMe" type="checkbox" class="accent-sky-500" required> Remember me</label>
+          <button type="submit" id="loginBtn" class="btn btn-primary btn-lg btn-block mb-4"><i data-lucide="shield-check"></i> Admin Sign In</button>
+          <p class="text-center text-sm text-muted">No admin account? <a href="admin-register.html" class="font-bold">Create admin account</a></p>
+        </form>
+      </div>
+      <p class="text-center text-sm text-muted mt-4"><a href="index.html" class="font-semibold">← Back to home</a></p>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+  <script>lucide.createIcons();</script>
+  <script src="assets/js/main.js"></script>
+  <script>
+    var ADMIN_KEY = 'aquapure_admins';
+    var SESSION_KEY = 'aquapure_session';
+
+    function getAdmins() {
+      try { return JSON.parse(localStorage.getItem(ADMIN_KEY)) || []; } catch (e) { return []; }
+    }
+    function getSession() { try { return JSON.parse(localStorage.getItem(SESSION_KEY)) || null; } catch (e) { return null; } }
+    function setSession(s) { localStorage.setItem(SESSION_KEY, JSON.stringify(s)); }
+
+    function showMsg(type, html) {
+      var m = document.getElementById('loginMsg');
+      m.classList.remove('hidden');
+      m.className = 'glass-card p-4 mb-4' + (type === 'error' ? ' badge-danger' : ' badge-primary');
+      m.innerHTML = html;
+    }
+
+    function alertPasswordHelp() { alert('Password reset link sent to your email (demo).'); return false; }
+
+    document.getElementById('loginForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (!document.getElementById('rememberMe').checked) {
+        showMsg('error', '<p class="text-sm font-bold">Please tick the Remember me box to continue.</p>');
+        return;
+      }
+      var email = document.getElementById('loginEmail').value.trim().toLowerCase();
+      var pass = document.getElementById('loginPass').value;
+
+      if (!/^[^\s@]+@gmail\.com$/.test(email)) {
+        showMsg('error', '<p class="text-sm font-bold">Please use a valid Gmail address (name@gmail.com).</p>');
+        return;
+      }
+
+      var admin = getAdmins().find(function (a) { return a.email === email; });
+      if (!admin) {
+        showMsg('error', '<p class="text-sm font-bold">No admin account found with this email.</p>');
+        return;
+      }
+      if (admin.password !== pass) {
+        showMsg('error', '<p class="text-sm font-bold">Incorrect password. Please try again.</p>');
+        return;
+      }
+      setSession({ role: 'admin', name: admin.first + ' ' + admin.last, email: admin.email });
+      document.getElementById('loginEmail').value = '';
+      document.getElementById('loginPass').value = '';
+      document.getElementById('rememberMe').checked = false;
+      showMsg('success', '<p class="text-sm font-bold">Sign in successful. Redirecting…</p>');
+      setTimeout(function () { window.location.href = 'admin/index.html'; }, 800);
+    });
+
+    function applyTheme() {
+      var saved = localStorage.getItem('ap-theme');
+      var dark = saved ? saved === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+      document.documentElement.classList.toggle('dark', dark);
+      document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+      var btn = document.getElementById('themeToggle');
+      if (btn && window.lucide) {
+        btn.innerHTML = dark ? '<i data-lucide="sun"></i>' : '<i data-lucide="moon"></i>';
+        lucide.createIcons();
+      }
+    }
+    function applyDirection() {
+      var dir = localStorage.getItem('ap-dir') || 'ltr';
+      document.documentElement.setAttribute('dir', dir);
+      document.documentElement.setAttribute('lang', dir === 'rtl' ? 'ar' : 'en');
+    }
+    document.getElementById('themeToggle').addEventListener('click', function () {
+      var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.classList.toggle('dark', next === 'dark');
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('ap-theme', next);
+      this.innerHTML = next === 'dark' ? '<i data-lucide="sun"></i>' : '<i data-lucide="moon"></i>';
+      if (window.lucide) lucide.createIcons();
+    });
+    document.getElementById('rtlToggle').addEventListener('click', function () {
+      var next = document.documentElement.getAttribute('dir') === 'rtl' ? 'ltr' : 'rtl';
+      document.documentElement.setAttribute('dir', next);
+      document.documentElement.setAttribute('lang', next === 'rtl' ? 'ar' : 'en');
+      localStorage.setItem('ap-dir', next);
+    });
+    applyTheme();
+    applyDirection();
+  </script>
+</body>
+</html>

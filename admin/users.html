@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Users — Customer Management | AquaPure Admin</title>
+  <meta name="description" content="Manage AquaPure customers, their AMC plans, contact details and statuses.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💧</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { darkMode: 'class', corePlugins: { preflight: false } };</script>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <div class="admin-shell">
+    <aside id="admin-sidebar" class="sidebar"></aside>
+
+    <div class="admin-main">
+      <div class="admin-topbar">
+        <div class="flex items-center gap-3">
+          <button class="icon-btn icon-btn-sm" onclick="toggleAdminSidebar()" aria-label="Toggle sidebar"><i data-lucide="panel-left-open"></i></button>
+          <div>
+            <h1 class="text-2xl font-extrabold">Users</h1>
+            <p class="text-muted text-sm">Customers, AMC holders &amp; team members.</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="search-box hidden md:block" style="width:220px;"><i data-lucide="search"></i><input id="userSearch" class="input" type="text" placeholder="Search customers..."></div>
+        </div>
+      </div>
+
+      <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4 mb-6">
+        <div class="metric-card reveal"><span class="metric-icon" style="background:var(--grad);"><i data-lucide="users"></i></span><div><p class="text-muted text-xs font-semibold">Total users</p><p class="text-xl font-extrabold">25,843</p></div></div>
+        <div class="metric-card reveal reveal-delay-1"><span class="metric-icon" style="background:linear-gradient(135deg,#06b6d4,#06b6d4);"><i data-lucide="shield-check"></i></span><div><p class="text-muted text-xs font-semibold">With active AMC</p><p class="text-xl font-extrabold">6,412</p></div></div>
+        <div class="metric-card reveal reveal-delay-2"><span class="metric-icon" style="background:linear-gradient(135deg,#06b6d4,#ec4899);"><i data-lucide="user-check"></i></span><div><p class="text-muted text-xs font-semibold">New this month</p><p class="text-xl font-extrabold">418</p></div></div>
+        <div class="metric-card reveal reveal-delay-3"><span class="metric-icon" style="background:linear-gradient(135deg,#0e7490,#06b6d4);"><i data-lucide="hard-hat"></i></span><div><p class="text-muted text-xs font-semibold">Technicians</p><p class="text-xl font-extrabold">120</p></div></div>
+      </div>
+
+      <div class="glass-card p-6 reveal">
+        <div class="table-wrap" style="border:none;">
+          <table class="tbl">
+            <thead><tr><th>Customer</th><th>Contact</th><th>AMC Plan</th><th>Expiry</th><th>Status</th><th></th></tr></thead>
+            <tbody id="usersBody"></tbody>
+          </table>
+        </div>
+        <p id="usersEmpty" class="text-muted text-sm hidden" style="padding:.75rem 0;">No users match your search.</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+  <script src="../assets/js/admin-navbar.js"></script>
+  <script>renderAdminNav('users');</script>
+  <script src="../assets/js/main.js"></script>
+  <script>
+    var USERS = [
+      { id: 'U1', name: 'Aisha Khan', phone: '+91 98123 45670', email: 'aisha.khan@gmail.com', avatar: '../assets/img/u-aisha.jpg', plan: 'Family AMC', expiry: 'Mar 12, 2027', status: 'Active', statusCls: 'badge-accent', lastService: 'Jul 10, 2026', visits: '2 of 4', joined: 'Mar 2026', address: '12 Green Park, New Delhi' },
+      { id: 'U2', name: 'Rajesh Kumar', phone: '+91 98123 45671', email: 'rajesh.kumar@gmail.com', avatar: '../assets/img/u-rajesh.jpg', plan: 'Premium+', expiry: 'Nov 2, 2026', status: 'Active', statusCls: 'badge-accent', lastService: 'Jun 18, 2026', visits: '3 of 6', joined: 'Nov 2025', address: '45 MG Road, Bengaluru' },
+      { id: 'U3', name: 'Priya Sharma', phone: '+91 98123 45672', email: 'priya.sharma@gmail.com', avatar: '../assets/img/u-priya.jpg', plan: '—', expiry: '—', status: 'Prospect', statusCls: 'badge-primary', lastService: '—', visits: '—', joined: 'Aug 2026', address: '78 Lake View, Chennai' },
+      { id: 'U4', name: 'James Carter', phone: '+91 98123 45673', email: 'james.carter@gmail.com', avatar: '../assets/img/u-james.jpg', plan: 'Essential AMC', expiry: 'Aug 1, 2026', status: 'Renew soon', statusCls: 'badge-warm', lastService: 'Jun 2, 2026', visits: '1 of 2', joined: 'Aug 2025', address: '9 Whitefield, Bengaluru' },
+      { id: 'U5', name: 'Omar Farooq', phone: '+91 98123 45674', email: 'omar.farooq@gmail.com', avatar: '../assets/img/u-omar.jpg', plan: 'Corporate', expiry: 'Dec 31, 2026', status: 'Active', statusCls: 'badge-accent', lastService: 'Jul 22, 2026', visits: '5 of 8', joined: 'Jan 2025', address: 'Tower 2, Hi-Tech City, Hyderabad' },
+      { id: 'U6', name: 'Anita Desai', phone: '+91 98123 45675', email: 'anita.desai@gmail.com', avatar: '../assets/img/u-anita.jpg', plan: 'Family AMC', expiry: 'Jan 20, 2027', status: 'Active', statusCls: 'badge-accent', lastService: 'May 30, 2026', visits: '1 of 4', joined: 'Jan 2026', address: '301 Sunrise Apartments, Pune' },
+      { id: 'U7', name: 'Vikram Rao', phone: '+91 98123 45676', email: 'vikram.rao@gmail.com', avatar: '../assets/img/u-vikram.jpg', plan: '—', expiry: '—', status: 'Staff', statusCls: 'badge-pink', lastService: '—', visits: '—', joined: 'Apr 2024', address: 'Senior Technician, West Zone' }
+    ];
+
+    function badgeCls(u) { return u.statusCls; }
+
+    function render() {
+      var q = (document.getElementById('userSearch').value || '').trim().toLowerCase();
+      var filtered = USERS.filter(function (u) {
+        return !q || (u.name + ' ' + u.phone + ' ' + u.email + ' ' + u.plan + ' ' + u.status).toLowerCase().indexOf(q) > -1;
+      });
+      document.getElementById('usersBody').innerHTML = filtered.map(function (u) {
+        return '<tr><td><div class="flex items-center gap-3"><img class="avatar" src="' + u.avatar + '" alt="' + u.name + '"><b>' + u.name + '</b></div></td>' +
+          '<td>' + u.phone + '</td><td>' + u.plan + '</td><td>' + u.expiry + '</td>' +
+          '<td><span class="badge ' + badgeCls(u) + '">' + u.status + '</span></td>' +
+          '<td><button class="btn btn-ghost btn-sm" onclick="viewUser(\'' + u.id + '\')"><i data-lucide="eye"></i> View</button></td></tr>';
+      }).join('');
+      document.getElementById('usersEmpty').classList.toggle('hidden', filtered.length > 0);
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function viewUser(id) {
+      var u = USERS.filter(function (x) { return x.id === id; })[0];
+      if (!u) return;
+      var overlay = document.createElement('div');
+      overlay.className = 'popup-backdrop';
+      overlay.innerHTML =
+        '<div class="popup-card" role="dialog" aria-modal="true" aria-label="User details">' +
+        '<div class="popup-head"><h3 class="font-extrabold">User Details</h3><button type="button" class="icon-btn icon-btn-sm popup-close" aria-label="Close"><i data-lucide="x"></i></button></div>' +
+        '<div class="flex items-center gap-4 mb-5">' +
+        '<img class="avatar" style="width:64px;height:64px;" src="' + u.avatar + '" alt="' + u.name + '">' +
+        '<div><h4 class="font-extrabold text-lg">' + u.name + '</h4><span class="badge ' + badgeCls(u) + '">' + u.status + '</span></div>' +
+        '</div>' +
+        '<div class="grid gap-3">' +
+        '<div class="data-row"><span class="grow font-semibold">Phone</span><b>' + u.phone + '</b></div>' +
+        '<div class="data-row"><span class="grow font-semibold">Email</span><b>' + u.email + '</b></div>' +
+        '<div class="data-row"><span class="grow font-semibold">AMC Plan</span><b>' + u.plan + '</b></div>' +
+        '<div class="data-row"><span class="grow font-semibold">Expiry</span><b>' + u.expiry + '</b></div>' +
+        '<div class="data-row"><span class="grow font-semibold">Visits used</span><b>' + u.visits + '</b></div>' +
+        '<div class="data-row"><span class="grow font-semibold">Last service</span><b>' + u.lastService + '</b></div>' +
+        '<div class="data-row"><span class="grow font-semibold">Customer since</span><b>' + u.joined + '</b></div>' +
+        '<div class="data-row"><span class="grow font-semibold">Address</span><b>' + u.address + '</b></div>' +
+        '</div>' +
+        '<div class="flex gap-3 justify-end mt-5">' +
+        '<a class="btn btn-ghost btn-sm" href="mailto:' + u.email + '?subject=AquaPure%20Account"><i data-lucide="mail"></i> Email</a>' +
+        '<button type="button" class="btn btn-primary btn-sm" onclick="this.closest(\'.popup-backdrop\').remove()"><i data-lucide="check"></i> Done</button>' +
+        '</div>' +
+        '</div>';
+      document.body.appendChild(overlay);
+      if (window.lucide) lucide.createIcons();
+      overlay.querySelector('.popup-close').addEventListener('click', function () { overlay.remove(); });
+      overlay.addEventListener('click', function (ev) { if (ev.target === overlay) overlay.remove(); });
+    }
+
+    document.getElementById('userSearch').addEventListener('input', render);
+    render();
+  </script>
+</body>
+</html>

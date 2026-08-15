@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | AquaPure</title>
+  <meta name="description" content="AquaPure admin dashboard: revenue, orders, service schedule and customer overview.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💧</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { darkMode: 'class', corePlugins: { preflight: false } };</script>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <div class="admin-shell dots-bg">
+    <aside id="admin-sidebar" class="sidebar"></aside>
+
+    <div class="admin-main">
+      <div class="admin-hero reveal">
+        <div class="flex items-center gap-3">
+          <button class="icon-btn icon-btn-sm" style="background:rgba(255,255,255,0.18);border-color:rgba(255,255,255,0.4);color:#fff;" onclick="toggleAdminSidebar()" aria-label="Toggle sidebar"><i data-lucide="panel-left-open"></i></button>
+          <div>
+            <p class="kicker" style="display:inline-block;">Admin Console</p>
+            <h1 class="text-2xl font-extrabold mt-1">Welcome back, <span id="adminName">Admin</span></h1>
+            <p class="text-muted text-sm">Here's today at a glance — revenue, orders and service schedule.</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3 flex-wrap">
+          <div class="search-box hidden sm:block" style="width:220px;">
+            <i data-lucide="search"></i>
+            <input id="adminSearch" class="input" type="text" placeholder="Search orders, customers...">
+          </div>
+          <div class="relative">
+            <button class="icon-btn icon-btn-sm" id="notifBtn" title="Notifications" aria-label="Notifications" onclick="toggleNotifications()"><i data-lucide="bell"></i><span id="notifDot" class="status-dot red hidden" style="position:absolute;margin-inline-start:26px;margin-top:-22px;"></span></button>
+            <div id="notifPanel" class="glass-card hidden" style="position:absolute;top:calc(100% + 10px);inset-inline-end:0;width:300px;padding:1rem;z-index:60;"></div>
+          </div>
+          <button class="icon-btn icon-btn-sm" id="rtlToggle" type="button" title="Toggle RTL / LTR" aria-label="Toggle layout direction"><i data-lucide="arrow-left-right"></i></button>
+          <button class="icon-btn icon-btn-sm" id="themeToggle" type="button" title="Toggle dark / light mode" aria-label="Toggle theme"><i data-lucide="moon"></i></button>
+          <button class="btn btn-ghost btn-sm" id="adminTopLogout" onclick="logoutAdmin()"><i data-lucide="log-out"></i> Logout</button>
+        </div>
+      </div>
+
+      <div id="dashMsg" class="glass-card p-4 mb-4 hidden"></div>
+
+      <!-- Key metrics -->
+      <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4 mb-6">
+        <div class="metric-card reveal">
+          <span class="metric-icon" style="background:var(--grad);"><i data-lucide="indian-rupee"></i></span>
+          <div><p class="text-muted text-xs font-semibold">Revenue (This Month)</p><p class="text-xl font-extrabold" id="mRevenue">—</p><p class="metric-up">From recent orders</p></div>
+        </div>
+        <div class="metric-card reveal reveal-delay-1">
+          <span class="metric-icon" style="background:linear-gradient(135deg,#0e7490,#06b6d4);"><i data-lucide="shopping-bag"></i></span>
+          <div><p class="text-muted text-xs font-semibold">Orders</p><p class="text-xl font-extrabold" id="mOrders">0</p><p class="metric-up" id="mOrdersSub">—</p></div>
+        </div>
+        <div class="metric-card reveal reveal-delay-2">
+          <span class="metric-icon" style="background:linear-gradient(135deg,#06b6d4,#06b6d4);"><i data-lucide="wrench"></i></span>
+          <div><p class="text-muted text-xs font-semibold">Service Jobs Today</p><p class="text-xl font-extrabold" id="mJobs">0</p><p class="metric-up" id="mJobsSub">—</p></div>
+        </div>
+        <div class="metric-card reveal reveal-delay-3">
+          <span class="metric-icon" style="background:linear-gradient(135deg,#06b6d4,#ec4899);"><i data-lucide="users"></i></span>
+          <div><p class="text-muted text-xs font-semibold">Active AMC Customers</p><p class="text-xl font-extrabold">6,412</p><p class="metric-up">▲ 214 this month</p></div>
+        </div>
+      </div>
+
+      <!-- Recent orders + today's schedule -->
+      <div class="grid gap-6 xl:grid-cols-2 mb-6">
+        <div class="glass-card p-6 reveal">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="font-extrabold text-lg">Recent Orders</h2>
+            <a href="orders.html" class="text-sm font-bold">View all →</a>
+          </div>
+          <div class="table-wrap" style="border:none;">
+            <table class="tbl" style="min-width:0;">
+              <thead><tr><th>Order</th><th>Customer</th><th>Amount</th><th>Status</th></tr></thead>
+              <tbody id="ordersBody"></tbody>
+            </table>
+          </div>
+          <p id="ordersEmpty" class="text-muted text-sm hidden" style="padding:.75rem 0;">No orders match your search.</p>
+        </div>
+
+        <div class="glass-card p-6 reveal reveal-delay-1">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="font-extrabold text-lg">Today's Service Schedule</h2>
+            <span class="badge badge-accent" id="scheduleBadge">—</span>
+          </div>
+          <div id="scheduleList" class="grid gap-3"></div>
+          <p id="scheduleEmpty" class="text-muted text-sm hidden" style="padding:.75rem 0;">No jobs match your search.</p>
+        </div>
+      </div>
+
+      <!-- Quick access -->
+      <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <a href="products.html" class="glass-card p-5 reveal">
+          <span class="icon-box icon-box-emerald icon-box-sm mb-3"><i data-lucide="shopping-bag"></i></span>
+          <p class="font-extrabold">Products</p>
+          <p class="text-muted text-sm">Manage purifier catalogue &amp; stock</p>
+        </a>
+        <a href="orders.html" class="glass-card p-5 reveal reveal-delay-1">
+          <span class="icon-box icon-box-amber icon-box-sm mb-3"><i data-lucide="clipboard-list"></i></span>
+          <p class="font-extrabold">Orders</p>
+          <p class="text-muted text-sm">Track orders &amp; service jobs</p>
+        </a>
+        <a href="users.html" class="glass-card p-5 reveal reveal-delay-2">
+          <span class="icon-box icon-box-violet icon-box-sm mb-3"><i data-lucide="users"></i></span>
+          <p class="font-extrabold">Customers</p>
+          <p class="text-muted text-sm">View and manage customers</p>
+        </a>
+        <a href="amc.html" class="glass-card p-5 reveal reveal-delay-3">
+          <span class="icon-box icon-box-pink icon-box-sm mb-3"><i data-lucide="shield-check"></i></span>
+          <p class="font-extrabold">AMC Plans</p>
+          <p class="text-muted text-sm">Configure maintenance plans</p>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+  <script src="../assets/js/admin-navbar.js"></script>
+  <script>renderAdminNav('dashboard');</script>
+  <script src="../assets/js/main.js"></script>
+  <script>
+    var SESSION_KEY = 'aquapure_session';
+    var AD_KEY = 'aquapure_admin_data';
+
+    function getSession() { try { return JSON.parse(localStorage.getItem(SESSION_KEY)) || null; } catch (e) { return null; } }
+    function getData() { try { return JSON.parse(localStorage.getItem(AD_KEY)) || null; } catch (e) { return null; } }
+    function saveData(d) { localStorage.setItem(AD_KEY, JSON.stringify(d)); }
+
+    function seedData() {
+      var data = {
+        orders: [
+          { id: '#AP-2041', customer: 'Priya Sharma', amount: 12999, status: 'Delivered' },
+          { id: '#AP-2040', customer: 'James Carter', amount: 3999, status: 'Installing' },
+          { id: '#AP-2039', customer: 'Omar Farooq', amount: 26999, status: 'Processing' },
+          { id: '#AP-2038', customer: 'Anita Desai', amount: 5499, status: 'Delivered' }
+        ],
+        schedule: [
+          { id: 'S1', name: 'K. Rao', zone: 'West Zone', service: 'General service', time: '9:00 – 10:00 AM', status: 'Done' },
+          { id: 'S2', name: 'S. Menon', zone: 'North Zone', service: 'RO membrane', time: '10:30 – 11:30 AM', status: 'En route' },
+          { id: 'S3', name: 'A. Gupta', zone: 'Downtown', service: 'New installation', time: '12:00 – 1:00 PM', status: 'Scheduled' },
+          { id: 'S4', name: 'L. Fernandes', zone: 'East', service: 'Leakage fix', time: '2:00 PM', status: 'Reschedule' }
+        ],
+        notifications: [
+          { id: 'N1', title: 'New order #AP-2041 received', time: '2 min ago', read: false },
+          { id: 'N2', title: 'AMC renewal due for 12 customers', time: '1 hour ago', read: false },
+          { id: 'N3', title: 'Low stock: Monsoon servicing kits', time: '3 hours ago', read: false }
+        ]
+      };
+      saveData(data);
+      return data;
+    }
+
+    function showMsg(type, html) {
+      var m = document.getElementById('dashMsg');
+      m.classList.remove('hidden');
+      m.className = 'glass-card p-4 mb-4' + (type === 'error' ? ' badge-danger' : ' badge-primary');
+      m.innerHTML = html;
+      clearTimeout(showMsg._t);
+      showMsg._t = setTimeout(function () { m.classList.add('hidden'); }, 4000);
+    }
+
+    function badgeFor(status) {
+      var map = {
+        'Delivered': 'badge-accent',
+        'Completed': 'badge-accent',
+        'Installing': 'badge-warm',
+        'En route': 'badge-warm',
+        'Processing': 'badge-primary',
+        'Scheduled': 'badge-primary',
+        'Pending': 'badge-warm',
+        'Reschedule': 'badge-danger',
+        'Cancelled': 'badge-danger',
+        'Done': ''
+      };
+      return map[status] || '';
+    }
+
+    function render() {
+      var data = getData() || seedData();
+      var q = (document.getElementById('adminSearch').value || '').trim().toLowerCase();
+
+      var revenue = data.orders.reduce(function (s, o) { return s + (o.amount || 0); }, 0);
+      document.getElementById('mRevenue').textContent = '₹' + revenue.toLocaleString('en-IN');
+      document.getElementById('mOrders').textContent = data.orders.length;
+      document.getElementById('mOrdersSub').textContent = data.orders.filter(function (o) { return o.status === 'Delivered'; }).length + ' delivered';
+      document.getElementById('mJobs').textContent = data.schedule.length;
+      document.getElementById('mJobsSub').textContent = data.schedule.filter(function (j) { return j.status === 'Done'; }).length + ' completed';
+      document.getElementById('scheduleBadge').textContent = 'Today: ' + data.schedule.length + ' slots';
+
+      var filteredOrders = data.orders.filter(function (o) {
+        return !q || o.id.toLowerCase().indexOf(q) > -1 || o.customer.toLowerCase().indexOf(q) > -1;
+      });
+      var ordersBody = document.getElementById('ordersBody');
+      ordersBody.innerHTML = filteredOrders.map(function (o) {
+        return '<tr><td><b>' + o.id + '</b></td><td>' + o.customer + '</td><td>₹' + o.amount.toLocaleString('en-IN') + '</td>' +
+          '<td><select class="select" style="padding:.4rem .6rem;font-size:.8rem;" onchange="updateOrderStatus(\'' + o.id + '\', this.value)">' +
+          ['Processing', 'Installing', 'Delivered', 'Reschedule', 'Cancelled'].map(function (st) {
+            return '<option' + (st === o.status ? ' selected' : '') + '>' + st + '</option>';
+          }).join('') +
+          '</select></td></tr>';
+      }).join('');
+      document.getElementById('ordersEmpty').classList.toggle('hidden', filteredOrders.length > 0);
+
+      var filteredJobs = data.schedule.filter(function (j) {
+        return !q || j.name.toLowerCase().indexOf(q) > -1 || j.service.toLowerCase().indexOf(q) > -1;
+      });
+      var scheduleList = document.getElementById('scheduleList');
+      scheduleList.innerHTML = filteredJobs.map(function (j) {
+        var dot = { 'Done': 'green', 'En route': 'blue', 'Scheduled': 'amber', 'Reschedule': 'red', 'Pending': 'amber' }[j.status] || 'green';
+        var action = j.status === 'Done'
+          ? '<button class="dl-btn" onclick="markJob(\'' + j.id + '\')">Undo</button>'
+          : '<button class="dl-btn" onclick="markJob(\'' + j.id + '\')"><i data-lucide="check"></i> Done</button>';
+        return '<div class="data-row"><span class="status-dot ' + dot + '"></span><div class="grow"><p class="font-semibold text-sm">' + j.name + ' · ' + j.zone + '</p><p class="text-muted text-xs">' + j.service + ' · ' + j.time + '</p></div><span class="badge ' + badgeFor(j.status) + '">' + j.status + '</span>' + action + '</div>';
+      }).join('');
+      document.getElementById('scheduleEmpty').classList.toggle('hidden', filteredJobs.length > 0);
+
+      renderNotifications();
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function updateOrderStatus(id, status) {
+      var data = getData() || seedData();
+      data.orders.forEach(function (o) { if (o.id === id) o.status = status; });
+      saveData(data);
+      render();
+      showMsg('success', '<p class="text-sm font-bold">Order ' + id + ' updated to ' + status + '.</p>');
+    }
+
+    function markJob(id) {
+      var data = getData() || seedData();
+      data.schedule.forEach(function (j) {
+        if (j.id === id) j.status = j.status === 'Done' ? 'Scheduled' : 'Done';
+      });
+      saveData(data);
+      render();
+    }
+
+    function toggleNotifications() {
+      var panel = document.getElementById('notifPanel');
+      panel.classList.toggle('hidden');
+    }
+
+    function renderNotifications() {
+      var data = getData() || seedData();
+      var unread = data.notifications.filter(function (n) { return !n.read; }).length;
+      var dot = document.getElementById('notifDot');
+      if (dot) dot.classList.toggle('hidden', unread === 0);
+      var panel = document.getElementById('notifPanel');
+      if (!panel) return;
+      panel.innerHTML = '<div class="flex items-center justify-between mb-3"><h3 class="font-extrabold text-sm">Notifications</h3>' +
+        '<button class="text-xs font-bold" onclick="markAllRead()">Mark all read</button></div>' +
+        (data.notifications.length
+          ? data.notifications.map(function (n) {
+              return '<button class="data-row" style="width:100%;text-align:start;border:none;" onclick="markRead(\'' + n.id + '\')"><span class="status-dot ' + (n.read ? 'gray' : 'blue') + '"></span><span class="grow"><span class="block text-sm font-semibold">' + n.title + '</span><span class="text-muted text-xs">' + n.time + '</span></span></button>';
+            }).join('')
+          : '<p class="text-muted text-sm">No notifications yet.</p>');
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function markRead(id) {
+      var data = getData() || seedData();
+      data.notifications.forEach(function (n) { if (n.id === id) n.read = true; });
+      saveData(data);
+      renderNotifications();
+    }
+
+    function markAllRead() {
+      var data = getData() || seedData();
+      data.notifications.forEach(function (n) { n.read = true; });
+      saveData(data);
+      renderNotifications();
+    }
+
+    document.addEventListener('click', function (e) {
+      var panel = document.getElementById('notifPanel');
+      if (panel && !panel.classList.contains('hidden') && !e.target.closest('#notifPanel') && e.target.id !== 'notifBtn') {
+        panel.classList.add('hidden');
+      }
+    });
+
+    document.getElementById('adminSearch').addEventListener('input', render);
+
+    (function () {
+      var s = getSession();
+      if (!s || s.role !== 'admin') { window.location.href = '../admin-login.html'; return; }
+      var name = document.getElementById('adminName');
+      if (name) name.textContent = s.name || 'Admin';
+    })();
+
+    function applyTheme() {
+      var saved = localStorage.getItem('ap-theme');
+      var dark = saved ? saved === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+      document.documentElement.classList.toggle('dark', dark);
+      document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+      var btn = document.getElementById('themeToggle');
+      if (btn && window.lucide) {
+        btn.innerHTML = dark ? '<i data-lucide="sun"></i>' : '<i data-lucide="moon"></i>';
+        lucide.createIcons();
+      }
+    }
+    function applyDirection() {
+      var dir = localStorage.getItem('ap-dir') || 'ltr';
+      document.documentElement.setAttribute('dir', dir);
+      document.documentElement.setAttribute('lang', dir === 'rtl' ? 'ar' : 'en');
+    }
+    var themeToggle = document.getElementById('themeToggle');
+    if (themeToggle) themeToggle.addEventListener('click', function () {
+      var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.classList.toggle('dark', next === 'dark');
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('ap-theme', next);
+      this.innerHTML = next === 'dark' ? '<i data-lucide="sun"></i>' : '<i data-lucide="moon"></i>';
+      if (window.lucide) lucide.createIcons();
+    });
+    var rtlToggle = document.getElementById('rtlToggle');
+    if (rtlToggle) rtlToggle.addEventListener('click', function () {
+      var next = document.documentElement.getAttribute('dir') === 'rtl' ? 'ltr' : 'rtl';
+      document.documentElement.setAttribute('dir', next);
+      document.documentElement.setAttribute('lang', next === 'rtl' ? 'ar' : 'en');
+      localStorage.setItem('ap-dir', next);
+    });
+    applyTheme();
+    applyDirection();
+    render();
+  </script>
+</body>
+</html>

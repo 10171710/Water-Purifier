@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Orders &amp; Service Requests | AquaPure Admin</title>
+  <meta name="description" content="Manage AquaPure orders, installations and service requests with same-day delivery tracking.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💧</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { darkMode: 'class', corePlugins: { preflight: false } };</script>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <div class="admin-shell">
+    <aside id="admin-sidebar" class="sidebar"></aside>
+
+    <div class="admin-main">
+      <div class="admin-topbar">
+        <div class="flex items-center gap-3">
+          <button class="icon-btn icon-btn-sm" onclick="toggleAdminSidebar()" aria-label="Toggle sidebar"><i data-lucide="panel-left-open"></i></button>
+          <div>
+            <h1 class="text-2xl font-extrabold">Orders &amp; Service</h1>
+            <p class="text-muted text-sm">Sales orders, installations and same-day service requests.</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="search-box hidden md:block" style="width:220px;"><i data-lucide="search"></i><input id="orderSearch" class="input" type="text" placeholder="Search orders..."></div>
+        </div>
+      </div>
+
+      <div class="flex gap-2 flex-wrap mb-6">
+        <button data-filter="all" class="chip active">All</button>
+        <button data-filter="pending" class="chip">Pending</button>
+        <button data-filter="installing" class="chip">Installing</button>
+        <button data-filter="delivered" class="chip">Delivered</button>
+        <button data-filter="service" class="chip">Service Jobs</button>
+      </div>
+
+      <div class="glass-card p-6 reveal">
+        <div class="table-wrap" style="border:none;">
+          <table class="tbl">
+            <thead><tr><th>Order ID</th><th>Customer</th><th>Item</th><th>Type</th><th>Slot</th><th>Amount</th><th>Status</th></tr></thead>
+            <tbody id="ordersBody"></tbody>
+          </table>
+        </div>
+        <p id="ordersEmpty" class="text-muted text-sm hidden" style="padding:.75rem 0;">No orders match your filter or search.</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+  <script src="../assets/js/admin-navbar.js"></script>
+  <script>renderAdminNav('orders');</script>
+  <script src="../assets/js/main.js"></script>
+  <script>
+    var ORDERS = [
+      { id: '#AP-2041', customer: 'Priya Sharma', item: 'Home+ RO 12L', type: 'Sale', slot: 'Aug 12 · 2–6 PM', amount: 12999, status: 'Delivered' },
+      { id: '#AP-2040', customer: 'James Carter', item: 'Rural+ 18L', type: 'Sale', slot: 'Aug 12 · 10–2 PM', amount: 3999, status: 'Installing' },
+      { id: '#AP-2039', customer: 'Omar Farooq', item: 'Office+ RO 30L', type: 'Corporate', slot: 'Aug 13 · 9–1 PM', amount: 26999, status: 'Processing' },
+      { id: '#AP-2038', customer: 'Anita Desai', item: 'Tabletop UV 6L', type: 'Sale', slot: 'Aug 11 · 2–6 PM', amount: 5499, status: 'Delivered' },
+      { id: '#SR-9812', customer: 'Rajesh Kumar', item: 'RO membrane change', type: 'Service', slot: 'Aug 12 · 10:30 AM', amount: 1349, status: 'Completed' },
+      { id: '#SR-9811', customer: 'Aisha Khan', item: 'General service', type: 'Service', slot: 'Aug 12 · 9:00 AM', amount: 399, status: 'Completed' },
+      { id: '#SR-9813', customer: 'L. Fernandes', item: 'Leakage fix', type: 'Service', slot: 'Aug 12 · 2:00 PM', amount: 319, status: 'Rescheduled' },
+      { id: '#SR-9814', customer: 'S. Menon', item: 'Booster pump repair', type: 'Service', slot: 'Aug 12 · 11:00 AM', amount: 1098, status: 'En route' }
+    ];
+
+    var FILTERS = {
+      all: function (o) { return true; },
+      pending: function (o) { return o.status === 'Processing'; },
+      installing: function (o) { return o.status === 'Installing'; },
+      delivered: function (o) { return o.status === 'Delivered'; },
+      service: function (o) { return o.type === 'Service'; }
+    };
+
+    var ACTIVE_FILTER = 'all';
+
+    function badgeFor(status) {
+      var map = {
+        'Delivered': 'badge-accent',
+        'Completed': 'badge-accent',
+        'Installing': 'badge-warm',
+        'En route': 'badge-primary',
+        'Processing': 'badge-primary',
+        'Rescheduled': 'badge-danger'
+      };
+      return map[status] || '';
+    }
+
+    function render() {
+      var q = (document.getElementById('orderSearch').value || '').trim().toLowerCase();
+      var rows = ORDERS.filter(function (o) {
+        if (!FILTERS[ACTIVE_FILTER](o)) return false;
+        if (!q) return true;
+        return [o.id, o.customer, o.item, o.type, o.status, o.slot].join(' ').toLowerCase().indexOf(q) > -1;
+      });
+      document.getElementById('ordersBody').innerHTML = rows.map(function (o) {
+        return '<tr><td><b>' + o.id + '</b></td><td>' + o.customer + '</td><td>' + o.item + '</td><td>' + o.type + '</td><td>' + o.slot + '</td><td>₹' + o.amount.toLocaleString('en-IN') + '</td><td><span class="badge ' + badgeFor(o.status) + '">' + o.status + '</span></td></tr>';
+      }).join('');
+      document.getElementById('ordersEmpty').classList.toggle('hidden', rows.length > 0);
+    }
+
+    document.querySelectorAll('[data-filter]').forEach(function (chip) {
+      chip.addEventListener('click', function () {
+        document.querySelectorAll('[data-filter]').forEach(function (c) { c.classList.remove('active'); });
+        chip.classList.add('active');
+        ACTIVE_FILTER = chip.getAttribute('data-filter');
+        render();
+      });
+    });
+
+    document.getElementById('orderSearch').addEventListener('input', render);
+    render();
+  </script>
+</body>
+</html>

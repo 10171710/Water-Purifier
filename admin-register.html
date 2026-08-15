@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Admin Account | AquaPure</title>
+  <meta name="description" content="Create an AquaPure admin account to manage the dashboard.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💧</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { darkMode: 'class', corePlugins: { preflight: false } };</script>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="min-h-screen">
+  <div class="flex items-center justify-center gap-2" style="position:fixed;top:1rem;inset-inline-end:1rem;z-index:60;">
+    <button class="icon-btn icon-btn-sm" id="rtlToggle" type="button" title="Toggle RTL / LTR" aria-label="Toggle layout direction"><i data-lucide="arrow-left-right"></i></button>
+    <button class="icon-btn icon-btn-sm" id="themeToggle" type="button" title="Toggle dark / light mode" aria-label="Toggle theme"><i data-lucide="moon"></i></button>
+  </div>
+  <div class="container-x flex items-center justify-center py-10 min-h-screen">
+    <div class="w-full max-w-md reveal">
+      <div class="glass-card p-8">
+        <a class="logo mb-4" href="index.html" dir="ltr" style="display:flex;justify-content:center;"><span class="logo-badge"><i data-lucide="shield-check"></i></span><span>Aqua<span class="text-grad">Pure</span></span></a>
+        <div class="text-center mb-6">
+          <h2 class="text-2xl font-extrabold">Create Admin Account</h2>
+          <p class="text-muted text-sm">Set up admin access for your team</p>
+        </div>
+
+        <form id="regForm" novalidate>
+          <div class="grid gap-4 sm:grid-cols-2">
+            <div class="form-group"><label class="label" for="fname">First Name</label><input id="fname" class="input" type="text" placeholder="Aisha" required></div>
+            <div class="form-group"><label class="label" for="lname">Last Name</label><input id="lname" class="input" type="text" placeholder="Khan" required></div>
+          </div>
+          <div class="form-group"><label class="label" for="regEmail">Email</label><input id="regEmail" class="input" type="email" placeholder="admin@gmail.com" required></div>
+          <div class="form-group">
+            <div class="flex items-center justify-between mb-1"><label class="label" for="regPass" style="margin-bottom:0;">Password</label></div>
+            <input id="regPass" class="input" type="password" placeholder="Min 8 characters" required>
+          </div>
+          <label class="flex items-start gap-2 text-sm text-muted mb-5">
+            <input id="regTerms" type="checkbox" class="accent-sky-500 mt-1" required>
+            <span>I agree to the <a href="#" class="font-semibold">Terms</a> and <a href="#" class="font-semibold">Privacy Policy</a></span>
+          </label>
+          <button type="submit" class="btn btn-primary btn-lg btn-block mb-5"><i data-lucide="user-plus"></i> Create Admin Account</button>
+          <p class="text-center text-sm text-muted">Already have an account? <a href="admin-login.html" class="font-bold">Sign in</a></p>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+  <script>lucide.createIcons();</script>
+  <script src="assets/js/main.js"></script>
+  <script>
+    var ADMIN_KEY = 'aquapure_admins';
+    function getAdmins() {
+      try { return JSON.parse(localStorage.getItem(ADMIN_KEY)) || []; } catch (e) { return []; }
+    }
+    document.getElementById('regForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var first = document.getElementById('fname').value.trim();
+      var last = document.getElementById('lname').value.trim();
+      var email = document.getElementById('regEmail').value.trim().toLowerCase();
+      var pass = document.getElementById('regPass').value;
+      var terms = document.getElementById('regTerms').checked;
+
+      if (!first || !last || !email || !pass) {
+        alert('Please fill in all the fields to create your admin account.');
+        return;
+      }
+      if (pass.length < 8) { alert('Password must be at least 8 characters.'); return; }
+      if (!/^[^\s@]+@gmail\.com$/.test(email)) {
+        alert('Please use a valid Gmail address (name@gmail.com).');
+        return;
+      }
+      if (!terms) {
+        alert('Please accept the Terms and Privacy Policy to continue.');
+        return;
+      }
+      var admins = getAdmins();
+      if (admins.some(function (a) { return a.email === email; })) {
+        alert('An admin account with this email already exists. Please sign in instead.');
+        window.location.href = 'admin-login.html';
+        return;
+      }
+      admins.push({
+        first: first,
+        last: last,
+        email: email,
+        password: pass
+      });
+      localStorage.setItem(ADMIN_KEY, JSON.stringify(admins));
+      alert('Admin account created! You can now sign in.');
+      window.location.href = 'admin-login.html';
+    });
+
+    function applyTheme() {
+      var saved = localStorage.getItem('ap-theme');
+      var dark = saved ? saved === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+      document.documentElement.classList.toggle('dark', dark);
+      document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+      var btn = document.getElementById('themeToggle');
+      if (btn && window.lucide) {
+        btn.innerHTML = dark ? '<i data-lucide="sun"></i>' : '<i data-lucide="moon"></i>';
+        lucide.createIcons();
+      }
+    }
+    function applyDirection() {
+      var dir = localStorage.getItem('ap-dir') || 'ltr';
+      document.documentElement.setAttribute('dir', dir);
+      document.documentElement.setAttribute('lang', dir === 'rtl' ? 'ar' : 'en');
+    }
+    document.getElementById('themeToggle').addEventListener('click', function () {
+      var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.classList.toggle('dark', next === 'dark');
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('ap-theme', next);
+      this.innerHTML = next === 'dark' ? '<i data-lucide="sun"></i>' : '<i data-lucide="moon"></i>';
+      if (window.lucide) lucide.createIcons();
+    });
+    document.getElementById('rtlToggle').addEventListener('click', function () {
+      var next = document.documentElement.getAttribute('dir') === 'rtl' ? 'ltr' : 'rtl';
+      document.documentElement.setAttribute('dir', next);
+      document.documentElement.setAttribute('lang', next === 'rtl' ? 'ar' : 'en');
+      localStorage.setItem('ap-dir', next);
+    });
+    applyTheme();
+    applyDirection();
+  </script>
+</body>
+</html>

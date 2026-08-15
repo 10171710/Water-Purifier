@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In | AquaPure</title>
+  <meta name="description" content="Sign in to your AquaPure customer dashboard to manage AMC plans, book services, view records and download certificates.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💧</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { darkMode: 'class', corePlugins: { preflight: false } };</script>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="min-h-screen">
+  <div class="flex items-center justify-center gap-2" style="position:fixed;top:1rem;inset-inline-end:1rem;z-index:60;">
+    <button class="icon-btn icon-btn-sm" id="rtlToggle" type="button" title="Toggle RTL / LTR" aria-label="Toggle layout direction"><i data-lucide="arrow-left-right"></i></button>
+    <button class="icon-btn icon-btn-sm" id="themeToggle" type="button" title="Toggle dark / light mode" aria-label="Toggle theme"><i data-lucide="moon"></i></button>
+  </div>
+  <div class="container-x flex items-center justify-center py-10 min-h-screen">
+    <div class="w-full max-w-md reveal">
+      <div class="glass-card p-8">
+        <a class="logo mb-4" href="index.html" dir="ltr" style="display:flex;justify-content:center;"><span class="logo-badge"><i data-lucide="droplet"></i></span><span>Aqua<span class="text-grad">Pure</span></span></a>
+        <div class="text-center mb-6">
+          <h2 class="text-2xl font-extrabold">Customer Sign in</h2>
+          <p class="text-muted text-sm">Welcome back</p>
+          <p class="text-muted text-sm">Sign in to your AquaPure customer dashboard</p>
+        </div>
+
+        <div id="loginMsg" class="glass-card p-4 mb-4 hidden"></div>
+
+        <form id="loginForm" novalidate>
+          <div class="form-group"><label class="label" for="loginEmail">Email</label><input id="loginEmail" class="input" type="email" placeholder="you@gmail.com" required></div>
+          <div class="form-group">
+            <div class="flex items-center justify-between mb-1"><label class="label" for="loginPass" style="margin-bottom:0;">Password</label><a href="#" class="text-sm font-semibold" onclick="return openForgot()">Forgot password?</a></div>
+            <input id="loginPass" class="input" type="password" placeholder="••••••••" required>
+          </div>
+          <label class="flex items-center gap-2 text-sm text-muted mb-5"><input id="rememberMe" type="checkbox" class="accent-sky-500" required> Remember me</label>
+          <button type="submit" id="loginBtn" class="btn btn-primary btn-lg btn-block mb-4"><i data-lucide="log-in"></i> Sign In</button>
+          <p class="text-center text-sm text-muted">No account yet? <a href="register.html" class="font-bold">Create an account</a></p>
+          <p class="text-center text-sm text-muted mt-2">No admin account? <a href="admin-login.html" class="font-bold">Sign in as admin</a></p>
+        </form>
+      </div>
+      <p class="text-center text-sm text-muted mt-4"><a href="index.html" class="font-semibold">← Back to home</a></p>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+  <script>lucide.createIcons();</script>
+  <script src="assets/js/main.js"></script>
+  <script>
+    var AUTH_KEY = 'aquapure_users';
+    var SESSION_KEY = 'aquapure_session';
+
+    function getUsers() {
+      try { return JSON.parse(localStorage.getItem(AUTH_KEY)) || []; } catch (e) { return []; }
+    }
+    function saveUsers(u) { localStorage.setItem(AUTH_KEY, JSON.stringify(u)); }
+    function getSession() { try { return JSON.parse(localStorage.getItem(SESSION_KEY)) || null; } catch (e) { return null; } }
+    function setSession(s) { localStorage.setItem(SESSION_KEY, JSON.stringify(s)); }
+
+    function showMsg(type, html) {
+      var m = document.getElementById('loginMsg');
+      m.classList.remove('hidden');
+      m.className = 'glass-card p-4 mb-4' + (type === 'error' ? ' badge-danger' : ' badge-primary');
+      m.innerHTML = html;
+    }
+
+    function openForgot() {
+      var overlay = document.createElement('div');
+      overlay.className = 'popup-backdrop';
+      overlay.innerHTML =
+        '<div class="popup-card" role="dialog" aria-modal="true" aria-label="Reset password">' +
+        '<div class="popup-head"><h3 class="font-extrabold">Reset password</h3>' +
+        '<button type="button" class="icon-btn icon-btn-sm popup-close" aria-label="Close"><i data-lucide="x"></i></button></div>' +
+        '<div id="forgotStep1">' +
+        '<p class="text-muted text-sm mb-4">Enter the email you registered with and we will set a new password for your account.</p>' +
+        '<div class="form-group"><label class="label" for="forgotEmail">Email</label><input id="forgotEmail" class="input" type="email" placeholder="you@email.com" required></div>' +
+        '<div id="forgotMsg" class="mb-3"></div>' +
+        '<button type="button" class="btn btn-primary btn-block" id="forgotNext">Continue</button>' +
+        '</div>' +
+        '<div id="forgotStep2" class="hidden">' +
+        '<p class="text-muted text-sm mb-4">Set a new password for <b id="forgotEmailShow"></b></p>' +
+        '<div class="form-group"><label class="label" for="forgotNewPass">New password</label><input id="forgotNewPass" class="input" type="password" placeholder="Min 8 characters" required></div>' +
+        '<div class="form-group"><label class="label" for="forgotConfirmPass">Confirm password</label><input id="forgotConfirmPass" class="input" type="password" placeholder="Repeat new password" required></div>' +
+        '<div id="forgotMsg2" class="mb-3"></div>' +
+        '<button type="button" class="btn btn-primary btn-block" id="forgotSave">Save new password</button>' +
+        '</div>' +
+        '</div>';
+      document.body.appendChild(overlay);
+      if (window.lucide) lucide.createIcons();
+
+      var emailInput = overlay.querySelector('#forgotEmail');
+      emailInput.addEventListener('keydown', function (ev) {
+        if (ev.key === 'Enter') { ev.preventDefault(); overlay.querySelector('#forgotNext').click(); }
+      });
+
+      overlay.querySelector('.popup-close').addEventListener('click', function () { overlay.remove(); });
+      overlay.addEventListener('click', function (ev) {
+        if (ev.target === overlay) overlay.remove();
+      });
+
+      overlay.querySelector('#forgotNext').addEventListener('click', function () {
+        var email = emailInput.value.trim().toLowerCase();
+        var msg = overlay.querySelector('#forgotMsg');
+        if (!email) {
+          msg.className = 'badge badge-danger p-2';
+          msg.innerHTML = '<p class="text-sm font-bold">Please enter your email.</p>';
+          return;
+        }
+        if (!/^[^\s@]+@gmail\.com$/.test(email)) {
+          msg.className = 'badge badge-danger p-2';
+          msg.innerHTML = '<p class="text-sm font-bold">Please use a valid Gmail address (name@gmail.com).</p>';
+          return;
+        }
+        var user = getUsers().find(function (u) { return u.email === email; });
+        if (!user) {
+          msg.className = 'badge badge-danger p-2';
+          msg.innerHTML = '<p class="text-sm font-bold">No account found with this email.</p>';
+          return;
+        }
+        overlay.querySelector('#forgotStep1').classList.add('hidden');
+        overlay.querySelector('#forgotStep2').classList.remove('hidden');
+        overlay.querySelector('#forgotEmailShow').textContent = user.email;
+      });
+
+      overlay.querySelector('#forgotSave').addEventListener('click', function () {
+        var np = overlay.querySelector('#forgotNewPass').value;
+        var cp = overlay.querySelector('#forgotConfirmPass').value;
+        var msg = overlay.querySelector('#forgotMsg2');
+        if (np.length < 8) {
+          msg.className = 'badge badge-danger p-2';
+          msg.innerHTML = '<p class="text-sm font-bold">New password must be at least 8 characters.</p>';
+          return;
+        }
+        if (np !== cp) {
+          msg.className = 'badge badge-danger p-2';
+          msg.innerHTML = '<p class="text-sm font-bold">Passwords do not match.</p>';
+          return;
+        }
+        var email = overlay.querySelector('#forgotEmailShow').textContent;
+        var users = getUsers();
+        users.forEach(function (u) { if (u.email === email) u.password = np; });
+        saveUsers(users);
+        overlay.innerHTML =
+          '<div class="popup-card" role="dialog" aria-modal="true">' +
+          '<div class="text-center py-4">' +
+          '<h3 class="font-extrabold mb-2">Password updated</h3>' +
+          '<p class="text-muted text-sm mb-4">Your password has been reset. Sign in with your new password.</p>' +
+          '<button type="button" class="btn btn-primary" id="forgotDone">Go to sign in</button>' +
+          '</div>' +
+          '</div>';
+        overlay.querySelector('#forgotDone').addEventListener('click', function () {
+          overlay.remove();
+          document.getElementById('loginEmail').value = email;
+          document.getElementById('loginPass').value = '';
+          document.getElementById('loginMsg').classList.add('hidden');
+          document.getElementById('loginEmail').focus();
+        });
+      });
+      return false;
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (!document.getElementById('rememberMe').checked) {
+        showMsg('error', '<p class="text-sm font-bold">Please tick the Remember me box to continue.</p>');
+        return;
+      }
+      var email = document.getElementById('loginEmail').value.trim().toLowerCase();
+      var pass = document.getElementById('loginPass').value;
+
+      if (!/^[^\s@]+@gmail\.com$/.test(email)) {
+        showMsg('error', '<p class="text-sm font-bold">Please use a valid Gmail address (name@gmail.com).</p>');
+        return;
+      }
+
+      var user = getUsers().find(function (u) { return u.email === email; });
+      if (!user) {
+        showMsg('error', '<p class="text-sm font-bold">No account found with this email.</p>');
+        document.getElementById('loginPass').value = '';
+        return;
+      }
+      if (user.password !== pass) {
+        showMsg('error', '<p class="text-sm font-bold">Incorrect password. Please try again.</p>');
+        document.getElementById('loginPass').value = '';
+        return;
+      }
+      setSession({ role: 'customer', name: user.first + ' ' + user.last, email: user.email });
+      document.getElementById('loginEmail').value = '';
+      document.getElementById('loginPass').value = '';
+      showMsg('success', '<p class="text-sm font-bold">Sign in successful. Redirecting…</p>');
+      setTimeout(function () { window.location.href = 'admin/customer.html'; }, 800);
+    });
+
+    function applyTheme() {
+      var saved = localStorage.getItem('ap-theme');
+      var dark = saved ? saved === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+      document.documentElement.classList.toggle('dark', dark);
+      document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+      var btn = document.getElementById('themeToggle');
+      if (btn && window.lucide) {
+        btn.innerHTML = dark ? '<i data-lucide="sun"></i>' : '<i data-lucide="moon"></i>';
+        lucide.createIcons();
+      }
+    }
+    function applyDirection() {
+      var dir = localStorage.getItem('ap-dir') || 'ltr';
+      document.documentElement.setAttribute('dir', dir);
+      document.documentElement.setAttribute('lang', dir === 'rtl' ? 'ar' : 'en');
+    }
+    document.getElementById('themeToggle').addEventListener('click', function () {
+      var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.classList.toggle('dark', next === 'dark');
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('ap-theme', next);
+      this.innerHTML = next === 'dark' ? '<i data-lucide="sun"></i>' : '<i data-lucide="moon"></i>';
+      if (window.lucide) lucide.createIcons();
+    });
+    document.getElementById('rtlToggle').addEventListener('click', function () {
+      var next = document.documentElement.getAttribute('dir') === 'rtl' ? 'ltr' : 'rtl';
+      document.documentElement.setAttribute('dir', next);
+      document.documentElement.setAttribute('lang', next === 'rtl' ? 'ar' : 'en');
+      localStorage.setItem('ap-dir', next);
+    });
+    applyTheme();
+    applyDirection();
+  </script>
+</body>
+</html>
