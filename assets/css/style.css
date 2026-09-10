@@ -643,9 +643,10 @@ table.tbl { width: 100%; border-collapse: collapse; min-width: 560px; font-size:
 .tbl tbody tr:hover { background: var(--bg-soft); }
 
 /* ---------- 13. BLOG ---------- */
-.filter-row { display: flex; gap: 0.6rem; overflow-x: auto; padding-bottom: 0.5rem; }
+.filter-row { display: flex; flex-wrap: wrap; align-items: center; column-gap: 0.6rem; row-gap: 0.6rem; padding-bottom: 0.5rem; }
 .blog-card { overflow: hidden; display: flex; flex-direction: column; scroll-margin-top: 90px; }
 .blog-card .thumb { aspect-ratio: 16/10; }
+.blog-article .thumb { aspect-ratio: 16/10; }
 .blog-meta { display: flex; align-items: center; gap: 0.8rem; font-size: 0.8rem; color: var(--text-muted); flex-wrap: wrap; }
 .blog-meta svg { width: 14px; height: 14px; }
 .tag-pill { font-size: 0.72rem; font-weight: 700; padding: 0.25rem 0.6rem; border-radius: 999px; background: rgba(14, 116, 144, 0.12); color: var(--primary); }
@@ -748,6 +749,7 @@ table.tbl { width: 100%; border-collapse: collapse; min-width: 560px; font-size:
 @media (max-width: 1024px) {
   .nav-links { display: none; }
   .nav-cta { display: none; }
+  .nav-actions { margin-inline-start: auto; }
   .footer-grid { grid-template-columns: 1fr 1fr; }
   .admin-shell { grid-template-columns: 1fr; }
   .sidebar { position: fixed; inset-inline-start: 0; top: 0; z-index: 80; width: 280px; transform: translateX(-105%); transition: transform 0.3s ease; }
@@ -768,7 +770,7 @@ table.tbl { width: 100%; border-collapse: collapse; min-width: 560px; font-size:
 .side-close { display: none; }
 .sidebar-backdrop { display: none; }
 
-@media (max-width: 1023.98px) {
+@media (max-width: 1024px) {
   .nav-toggle { display: inline-flex; }
   .mobile-menu {
     position: fixed; inset-block: 0; inset-inline-end: 0; z-index: 120;
@@ -1166,7 +1168,7 @@ a.tl-item { text-decoration: none; color: inherit; }
 .btn-white-outline:hover { background: rgba(255, 255, 255, 0.16); color: #fff; transform: translateY(-2px); }
 
 /* Check list items */
-.check-item { display: flex; gap: 0.8rem; align-items: flex-start; }
+.check-item { display: flex; gap: 0.8rem; align-items: center; }
 .check-item svg { color: var(--accent); flex-shrink: 0; margin-top: 0.2rem; }
 
 /* Brand chips */
@@ -1185,10 +1187,12 @@ a.tl-item { text-decoration: none; color: inherit; }
 /* Marquee trust strip */
 .marquee-wrap { border-block: 1px solid var(--glass-border); background: var(--glass-strong); padding-block: 1.15rem; box-shadow: 6px 6px 16px var(--shadow-1), -6px -6px 16px var(--shadow-2); }
 
-/* Product card thumbs */
+/* Product card thumbs — image fills the entire thumbnail box */
 .product-card { overflow: hidden; scroll-margin-top: 90px; }
+.product-card .p-thumb { background: var(--bg-soft); }
 .product-card .p-thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
-.product-card:hover .p-thumb img { transform: scale(1.06); }
+.product-card:hover .p-thumb img { transform: scale(1.04); }
+.product-card .card-body { padding-top: 2.5rem; }
 
 /* Brand + rating floating pill on hero */
 .hero-pill {
@@ -1221,4 +1225,53 @@ a.tl-item { text-decoration: none; color: inherit; }
 @media (max-width: 640px) {
   .band-stats { grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
   .band-stats .stat-card + .stat-card { border-inline-start: none; }
+}
+
+/* ============================================================
+   AQUAPURE FIXES — contrast, spacing & polish
+   ============================================================ */
+
+/* Consistent separation between hero and following content
+   padding-bottom overrides varied inline styles so every page
+   gets the same vertical rhythm. */
+.hero { margin-bottom: 1.5rem; padding-bottom: 3rem !important; }
+
+/* Dark mode: brighter muted text & labels for better readability */
+[data-theme="dark"] { --text-muted: #a5b8d8; color-scheme: dark; }
+:root { color-scheme: light; }
+[data-theme="dark"] .label { color: #eef4ff; }
+[data-theme="dark"] .badge,
+[data-theme="dark"] .chip,
+[data-theme="dark"] .neu-chip,
+[data-theme="dark"] .brand-chip,
+[data-theme="dark"] .blog-meta,
+[data-theme="dark"] .spec-row span:first-child,
+[data-theme="dark"] .tbl th { color: #c9d6f2; }
+
+/* Keep selected option text readable in dark mode */
+[data-theme="dark"] .select { color: #eef4ff; background-color: #101a2e; color-scheme: dark; }
+.select option { background-color: #ffffff; color: #1f2937; }
+[data-theme="dark"] .select option { background-color: #111c33; color: #eef4ff; }
+[data-theme="dark"] .select option:checked { background-color: #1c2740; color: #ffffff; }
+
+/* AMC "Popular" plan — badge ribbon on top of the card */
+.amc-popular { position: relative; }
+.amc-popular-badge {
+  position: absolute; top: -0.9rem; inset-inline-start: 50%; transform: translateX(-50%);
+  z-index: 2; display: inline-flex; align-items: center; gap: 0.35rem;
+  box-shadow: 0 12px 24px -10px rgba(6, 182, 212, 0.65);
+}
+
+/* Blog filter row: hover interaction removed entirely so the chips
+   never overlap the search box or each other */
+.filter-row .chip,
+.filter-row .chip:hover,
+.filter-row .chip:focus {
+  transform: none; box-shadow: none;
+  color: var(--text-muted); border-color: var(--glass-border); background: var(--glass-strong);
+  transition: none;
+}
+.filter-row .chip.active {
+  background: var(--grad); color: #fff; border-color: transparent;
+  box-shadow: 0 8px 18px -8px rgba(14, 116, 144, 0.6);
 }
