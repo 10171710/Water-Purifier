@@ -1254,13 +1254,39 @@ a.tl-item { text-decoration: none; color: inherit; }
 [data-theme="dark"] .select option { background-color: #111c33; color: #eef4ff; }
 [data-theme="dark"] .select option:checked { background-color: #1c2740; color: #ffffff; }
 
-/* AMC "Popular" plan — badge ribbon on top of the card */
+/* AMC "Popular" plan — high-visibility ribbon badge + card glow */
 .amc-popular { position: relative; }
 .amc-popular-badge {
-  position: absolute; top: -0.9rem; inset-inline-start: 50%; transform: translateX(-50%);
-  z-index: 2; display: inline-flex; align-items: center; gap: 0.35rem;
-  box-shadow: 0 12px 24px -10px rgba(6, 182, 212, 0.65);
+  position: absolute; top: -1rem; inset-inline-start: 50%; transform: translateX(-50%);
+  z-index: 3; display: inline-flex; align-items: center; gap: 0.4rem;
+  padding: 0.45rem 1.1rem; border-radius: 999px;
+  background: var(--grad); color: #fff; font-weight: 800; font-size: 0.8rem; letter-spacing: 0.05em;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 10px 24px -8px rgba(6, 182, 212, 0.7);
+  animation: popularPulse 2.2s ease-in-out infinite;
 }
+@keyframes popularPulse {
+  0%, 100% { box-shadow: 0 10px 24px -8px rgba(6, 182, 212, 0.7); }
+  50% { box-shadow: 0 16px 32px -6px rgba(6, 182, 212, 0.95); }
+}
+.price-card.featured, .amc-popular {
+  box-shadow: 0 0 0 4px rgba(6, 182, 212, 0.14),
+    0 18px 40px -18px var(--shadow-1);
+}
+
+/* Social sign-in buttons (Google / Apple) */
+.social-divider {
+  display: flex; align-items: center; gap: 0.75rem;
+  color: var(--text-muted); font-size: 0.8rem; font-weight: 600;
+}
+.social-divider::before, .social-divider::after {
+  content: ""; flex: 1; height: 1px; background: var(--glass-border);
+}
+.btn-social {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 0.5rem; padding-block: 0.6rem; font-weight: 700;
+}
+.btn-social svg { width: 18px; height: 18px; pointer-events: none; }
 
 /* Blog filter row: hover interaction removed entirely so the chips
    never overlap the search box or each other */
@@ -1275,3 +1301,13 @@ a.tl-item { text-decoration: none; color: inherit; }
   background: var(--grad); color: #fff; border-color: transparent;
   box-shadow: 0 8px 18px -8px rgba(14, 116, 144, 0.6);
 }
+
+/* Blog toolbar: no card lift / shadow bleed on hover so the search box
+   and category chips never overlap */
+.blog-toolbar:hover {
+  transform: none !important;
+  border-color: var(--glass-border) !important;
+  box-shadow: 0 18px 40px -18px var(--shadow-1),
+    inset 1px 1px 0 var(--inner-2), inset -1px -1px 0 var(--inner-1) !important;
+}
+.blog-toolbar .filter-row { padding-bottom: 0; }
