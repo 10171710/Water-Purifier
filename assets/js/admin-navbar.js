@@ -78,7 +78,7 @@ function renderAdminNav(activePage) {
     const dashGroup = links.find((g) => g.items && g.items[0] && g.items[0].key === 'dashboard');
     if (dashGroup) dashGroup.items[0].href = 'customer.html';
   }
-  host.innerHTML = buildSidebar(links, isCustomer ? 'customer.html' : 'index.html');
+  host.innerHTML = buildSidebar(links, '../index.html');
   const saved = localStorage.getItem('ap-theme');
   const dark = saved ? saved === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
   document.documentElement.classList.toggle('dark', dark);
