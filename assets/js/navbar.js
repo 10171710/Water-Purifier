@@ -74,6 +74,7 @@ function buildNavbarMarkup() {
         <i data-lucide="moon"></i>
       </button>
       <a href="login.html" class="btn btn-ghost btn-sm nav-cta"><i data-lucide="user"></i> Login</a>
+      <a href="admin/customer.html" class="btn btn-primary btn-sm nav-cta"><i data-lucide="layout-dashboard"></i> Dashboard</a>
       <button class="icon-btn icon-btn-sm nav-toggle" id="navToggle" type="button" title="Menu" aria-label="Open menu"><i data-lucide="menu"></i></button>
     </div>
     </div>
@@ -94,7 +95,10 @@ function buildNavbarMarkup() {
         return `<a href="${l.href}">${l.label}</a>`;
       }).join('')}
     </nav>
-    <a href="login.html" class="btn btn-primary btn-block" style="margin-top:auto;"><i data-lucide="user"></i> Login</a>
+    <div class="mobile-menu-cta mt-auto pt-4 flex flex-col gap-2">
+      <a href="login.html" class="btn btn-ghost btn-block"><i data-lucide="user"></i> Login</a>
+      <a href="admin/customer.html" class="btn btn-primary btn-block"><i data-lucide="layout-dashboard"></i> Dashboard</a>
+    </div>
   </div>
   <div class="mobile-backdrop" id="mobileBackdrop"></div>`;
 }

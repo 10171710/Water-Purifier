@@ -661,7 +661,6 @@ table.tbl { width: 100%; border-collapse: collapse; min-width: 560px; font-size:
   opacity: 0.5;
 }
 @keyframes dotsDrift { from { background-position: 0 0; } to { background-position: 56px 56px; } }
-.dots-bg .sidebar { position: sticky; z-index: 1; }
 .dots-bg .admin-main { position: relative; z-index: 1; }
 
 .admin-hero, .welcome-hero {
@@ -751,18 +750,54 @@ table.tbl { width: 100%; border-collapse: collapse; min-width: 560px; font-size:
   .nav-cta { display: none; }
   .nav-actions { margin-inline-start: auto; }
   .footer-grid { grid-template-columns: 1fr 1fr; }
-  .admin-shell { grid-template-columns: 1fr; }
-  .sidebar { position: fixed; inset-inline-start: 0; top: 0; z-index: 80; width: 280px; transform: translateX(-105%); transition: transform 0.3s ease; }
-  [dir="rtl"] .sidebar { transform: translateX(105%); }
-  .sidebar.open { transform: none; }
+  .admin-shell, .dots-bg.admin-shell { display: flex; flex-direction: column; width: 100%; min-height: 100vh; }
+  .sidebar, .dots-bg .sidebar, #admin-sidebar {
+    position: fixed !important; inset-inline-start: 0; top: 0; z-index: 130;
+    width: 280px; max-width: 86vw; height: 100vh; height: 100dvh;
+    transform: translateX(-105%); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    background: var(--bg);
+    border-inline-end: 1px solid var(--border);
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.4);
+  }
+  [dir="rtl"] .sidebar, [dir="rtl"] .dots-bg .sidebar, [dir="rtl"] #admin-sidebar { transform: translateX(105%); }
+  .sidebar.open, .dots-bg .sidebar.open, #admin-sidebar.open { transform: none !important; }
+  .admin-main, .dots-bg .admin-main { width: 100%; max-width: 100%; min-width: 0; padding: 1.25rem 1rem; margin: 0; }
 }
+
+@media (max-width: 768px) {
+  .welcome-hero, .admin-hero { padding: 1.25rem 1.1rem; gap: 1rem; }
+}
+
 @media (max-width: 640px) {
   .footer-grid { grid-template-columns: 1fr; }
   .stat-strip { grid-template-columns: repeat(2, 1fr); }
-  .section { padding-block: 3.5rem; }
+  .section { padding-block: 3rem; }
+  .admin-main, .dots-bg .admin-main { padding: 0.85rem 0.75rem; }
+  .welcome-hero, .admin-hero {
+    padding: 1.05rem 0.9rem;
+    border-radius: 18px;
+    margin-bottom: 1.15rem;
+    gap: 0.85rem;
+  }
+  .welcome-hero h1, .admin-hero h1 { font-size: 1.25rem; line-height: 1.25; }
+  .welcome-hero p.text-muted, .admin-hero p.text-muted { font-size: 0.8rem; }
+  .welcome-hero .btn-sm, .admin-hero .btn-sm { padding: 0.45rem 0.75rem; font-size: 0.8rem; height: 36px; }
+  .welcome-hero .icon-btn-sm, .admin-hero .icon-btn-sm { width: 36px; height: 36px; }
+  .admin-topbar { margin-bottom: 1.15rem; gap: 0.75rem; }
+  .admin-topbar h1 { font-size: 1.2rem; }
+  .popup-card { padding: 1.1rem; border-radius: 18px; }
+  .metric-card { padding: 0.95rem; border-radius: 16px; }
+  .metric-icon { width: 42px; height: 42px; border-radius: 12px; }
+  .metric-icon svg { width: 20px; height: 20px; }
+  .data-row { font-size: 0.85rem; }
 }
-@media (max-width: 420px) {
-  .stat-strip { grid-template-columns: 1fr 1fr; }
+
+@media (max-width: 380px) {
+  .stat-strip { grid-template-columns: 1fr; }
+  .admin-main, .dots-bg .admin-main { padding: 0.65rem 0.5rem; }
+  .welcome-hero, .admin-hero { padding: 0.9rem 0.75rem; border-radius: 16px; }
+  .welcome-hero h1, .admin-hero h1 { font-size: 1.15rem; }
+  .metric-card { padding: 0.85rem; }
 }
 
 /* ---------- 17. MOBILE MENU + RESPONSIVE DASHBOARD ---------- */
@@ -790,6 +825,7 @@ table.tbl { width: 100%; border-collapse: collapse; min-width: 560px; font-size:
   .mobile-links { display: grid; gap: 0.3rem; }
   .mobile-links a { display: flex; align-items: center; gap: 0.65rem; padding: 0.7rem 0.85rem; border-radius: 12px; color: var(--text); font-weight: 600; font-size: 0.95rem; }
   .mobile-links a:hover { background: var(--bg-soft); }
+  .mobile-menu-cta { margin-top: auto; padding-top: 1rem; display: flex; flex-direction: column; gap: 0.6rem; }
   .mobile-backdrop {
     display: block; position: fixed; inset: 0; z-index: 119;
     background: rgba(15, 23, 42, 0.55);
@@ -802,20 +838,12 @@ table.tbl { width: 100%; border-collapse: collapse; min-width: 560px; font-size:
 @media (max-width: 1024px) {
   .side-close { display: inline-flex; }
   .sidebar-backdrop {
-    display: block; position: fixed; inset: 0; z-index: 79;
+    display: block; position: fixed; inset: 0; z-index: 125;
     background: rgba(15, 23, 42, 0.55);
     opacity: 0; pointer-events: none; transition: opacity 0.25s ease;
   }
   .sidebar-backdrop.open { opacity: 1; pointer-events: auto; }
   body.sidebar-open { overflow: hidden; }
-}
-
-@media (max-width: 640px) {
-  .admin-main { padding: 1.1rem 1rem; }
-  .admin-topbar { margin-bottom: 1.25rem; }
-  .popup-card { padding: 1.1rem; }
-  .metric-card { padding: 1.1rem; }
-  .admin-topbar h1 { font-size: 1.3rem; }
 }
 
 /* ============================================================

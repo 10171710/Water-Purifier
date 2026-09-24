@@ -58,7 +58,16 @@
     var SESSION_KEY = 'aquapure_session';
 
     function getUsers() {
-      try { return JSON.parse(localStorage.getItem(AUTH_KEY)) || []; } catch (e) { return []; }
+      try {
+        var u = JSON.parse(localStorage.getItem(AUTH_KEY));
+        if (Array.isArray(u) && u.length > 0) return u;
+      } catch (e) {}
+      var defaults = [
+        { first: 'Aisha', last: 'Khan', email: 'aisha.khan@gmail.com', phone: '9876543210', password: 'password123', address: '14 Lotus Enclave, Mumbai' },
+        { first: 'Demo', last: 'User', email: 'demo@gmail.com', phone: '9800000000', password: 'password123', address: '123 Marine Drive, Mumbai' }
+      ];
+      localStorage.setItem(AUTH_KEY, JSON.stringify(defaults));
+      return defaults;
     }
     function saveUsers(u) { localStorage.setItem(AUTH_KEY, JSON.stringify(u)); }
     function getSession() { try { return JSON.parse(localStorage.getItem(SESSION_KEY)) || null; } catch (e) { return null; } }
@@ -198,8 +207,8 @@
       setSession({ role: 'customer', name: user.first + ' ' + user.last, email: user.email });
       document.getElementById('loginEmail').value = '';
       document.getElementById('loginPass').value = '';
-      showMsg('success', '<p class="text-sm font-bold">Sign in successful. Redirecting…</p>');
-      setTimeout(function () { window.location.href = 'admin/customer.html'; }, 800);
+      document.getElementById('rememberMe').checked = false;
+      showMsg('success', '<p class="text-sm font-bold">Login successful!</p>');
     });
 
     function applyTheme() {
